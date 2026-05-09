@@ -1,10 +1,10 @@
 import { createEffect, createSignal, onCleanup, type Accessor } from 'solid-js'
 
-export const DESCRIPTION_PEEK_DELAY_MS = 300
+export const DESCRIPTION_PEEK_DELAY_MS = 220
 
 /** Max-height + opacity on description clip / fade overlay. */
 export const DESCRIPTION_DESC_OPEN =
-  'max-height 720ms cubic-bezier(0.22, 1, 0.36, 1), opacity 520ms cubic-bezier(0.22, 1, 0.36, 1)'
+  'max-height 520ms cubic-bezier(0.4, 0, 0.2, 1), opacity 380ms cubic-bezier(0.4, 0, 0.2, 1)'
 export const DESCRIPTION_DESC_CLOSE =
   'max-height 320ms cubic-bezier(0.4, 0, 1, 1), opacity 240ms cubic-bezier(0.4, 0, 1, 1)'
 
