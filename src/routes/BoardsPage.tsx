@@ -5,6 +5,7 @@ import { enterConfirmDelete, enterCtrlMetaSubmit, enterFocusDescription } from '
 import { Button } from '@kobalte/core/button'
 import { TextField } from '@kobalte/core/text-field'
 import { Dialog } from '@kobalte/core/dialog'
+import { ShellExcludedDialogContent } from './board/ShellExcludedDialogContent'
 import { Pencil, Trash2 } from 'lucide-solid'
 import { copy, formatBoardCompactStats } from '../lib/copy'
 import { formatShortDateTime } from '../lib/formatDate'
@@ -726,7 +727,7 @@ export default function BoardsPage() {
         <Dialog.Portal>
           <Dialog.Overlay class="fixed inset-0 z-40 bg-black/60 backdrop-blur-[2px]" />
           <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
-            <Dialog.Content
+            <ShellExcludedDialogContent
               ref={(el) => {
                 deleteBoardContentEl = el
               }}
@@ -756,7 +757,7 @@ export default function BoardsPage() {
                   {copy.delete}
                 </Button>
               </div>
-            </Dialog.Content>
+            </ShellExcludedDialogContent>
           </div>
         </Dialog.Portal>
       </Dialog>

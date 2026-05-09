@@ -1,4 +1,5 @@
-import { createEffect, createMemo, createSignal, Show } from 'solid-js'
+import { batch, createEffect, createMemo, createSignal, Show } from 'solid-js'
+import type { Accessor, Setter } from 'solid-js'
 import { Button } from '@kobalte/core/button'
 import { TextField } from '@kobalte/core/text-field'
 import { Dialog } from '@kobalte/core/dialog'
@@ -17,6 +18,7 @@ import {
 import { createDescriptionPeek, DESCRIPTION_DESC_CLOSE, DESCRIPTION_DESC_OPEN } from '../../lib/descPeek'
 import { createDescPeekNeedsFade } from '../../lib/descPeekOverflow'
 import { BoardFormDialog } from './BoardFormDialog'
+import { ShellExcludedDialogContent } from './ShellExcludedDialogContent'
 import { DescriptionField } from './DescriptionField'
 import { FieldLabelWithCount } from './FieldLabelWithCount'
 import { BOARD_DESCRIPTION_TEXT_CLASS } from '../../lib/boardViewConstants'
@@ -34,6 +36,8 @@ export function TaskRow(props: {
   boardDrag: () => BoardDragState
   onTaskDragPointerDown: (e: PointerEvent) => void
   onError: (err?: unknown) => void
+  exclusiveEditTaskId: Accessor<string | null>
+  setExclusiveEditTaskId: Setter<string | null>
 }) {
   const taskDesc = createDescriptionPeek()
   const [taskDescFade, attachTaskDescClip] = createDescPeekNeedsFade({
@@ -56,10 +60,31 @@ export function TaskRow(props: {
     queueMicrotask(() => taskEditNameEl?.focus())
   })
 
+  /** Board-wide: only one task edit dialog; closes this row when another task claims the lease. */
   createEffect(() => {
+    if (props.exclusiveEditTaskId() !== props.task.id && editOpen()) {
+      batch(() => {
+        setEditOpen(false)
+        setTaskEditErr(null)
+      })
+    }
+  })
+
+  createEffect(() => {
+    if (editOpen()) return
     setName(props.task.name)
     setDesc(props.task.description)
   })
+
+  const closeEdit = () => {
+    batch(() => {
+      setEditOpen(false)
+      setTaskEditErr(null)
+      if (props.exclusiveEditTaskId() === props.task.id) {
+        props.setExclusiveEditTaskId(null)
+      }
+    })
+  }
 
   let lastTaskQuickTap: { t: number; x: number; y: number } | null = null
   let prevTaskBoardDrag: BoardDragState | null = null
@@ -108,6 +133,7 @@ export function TaskRow(props: {
           const ddy = ev.clientY - oy
           if (ddx * ddx + ddy * ddy < 12 * 12) {
             setTaskEditErr(null)
+            props.setExclusiveEditTaskId(props.task.id)
             setEditOpen(true)
           }
           lastTaskQuickTap = { t: Date.now(), x: ev.clientX, y: ev.clientY }
@@ -147,7 +173,7 @@ export function TaskRow(props: {
         t.description = ds
       }
     })
-    setEditOpen(false)
+    closeEdit()
     try {
       const { data } = await patchTask(props.boardId, props.columnId, props.task.id, { name: nm, description: ds })
       props.setBoard((b) => {
@@ -170,6 +196,7 @@ export function TaskRow(props: {
       })
       const msg = userFacingApiError(e)
       queueMicrotask(() => {
+        props.setExclusiveEditTaskId(props.task.id)
         setName(nm)
         setDesc(ds)
         setEditOpen(true)
@@ -297,8 +324,11 @@ export function TaskRow(props: {
         title={copy.editTask}
         open={editOpen()}
         onOpenChange={(open) => {
-          setEditOpen(open)
-          if (!open) setTaskEditErr(null)
+          if (open) {
+            setEditOpen(true)
+          } else {
+            closeEdit()
+          }
         }}
       >
         <div class="mt-4 flex flex-col gap-3">
@@ -332,7 +362,7 @@ export function TaskRow(props: {
           <Button
             type="button"
             class="rounded-[var(--radius-control)] border border-border bg-bg-muted px-4 py-2 text-sm"
-            onClick={() => setEditOpen(false)}
+            onClick={() => closeEdit()}
           >
             {copy.cancel}
           </Button>
@@ -350,7 +380,7 @@ export function TaskRow(props: {
         <Dialog.Portal>
           <Dialog.Overlay class="fixed inset-0 z-40 bg-black/60" />
           <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
-            <Dialog.Content
+            <ShellExcludedDialogContent
               ref={(el) => {
                 taskDeleteContentEl = el
               }}
@@ -380,7 +410,7 @@ export function TaskRow(props: {
                   {copy.delete}
                 </Button>
               </div>
-            </Dialog.Content>
+            </ShellExcludedDialogContent>
           </div>
         </Dialog.Portal>
       </Dialog>

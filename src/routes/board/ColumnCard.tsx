@@ -1,4 +1,5 @@
 import { createEffect, createMemo, createSignal, For, onCleanup, Show } from 'solid-js'
+import type { Accessor, Setter } from 'solid-js'
 import { Button } from '@kobalte/core/button'
 import { TextField } from '@kobalte/core/text-field'
 import { Dialog } from '@kobalte/core/dialog'
@@ -21,6 +22,7 @@ import { taskDropLineBeforeFullIndex } from '../../lib/boardPointerDnD'
 import { createDescriptionPeek, DESCRIPTION_DESC_CLOSE, DESCRIPTION_DESC_OPEN } from '../../lib/descPeek'
 import { createDescPeekNeedsFade } from '../../lib/descPeekOverflow'
 import { BoardFormDialog } from './BoardFormDialog'
+import { ShellExcludedDialogContent } from './ShellExcludedDialogContent'
 import { DescriptionField } from './DescriptionField'
 import { FieldLabelWithCount } from './FieldLabelWithCount'
 import type { BoardDragPayload, BoardDragState } from './boardDragTypes'
@@ -40,6 +42,8 @@ export function ColumnCard(props: {
   boardDrag: () => BoardDragState
   startBoardDrag: (e: PointerEvent, payload: BoardDragPayload) => void
   onBoardError: (err?: unknown) => void
+  exclusiveEditTaskId: Accessor<string | null>
+  setExclusiveEditTaskId: Setter<string | null>
 }) {
   const colDesc = createDescriptionPeek()
   const [colDescFade, attachColDescClip] = createDescPeekNeedsFade({
@@ -416,6 +420,8 @@ export function ColumnCard(props: {
                 task={task}
                 setBoard={props.setBoard}
                 boardDrag={props.boardDrag}
+                exclusiveEditTaskId={props.exclusiveEditTaskId}
+                setExclusiveEditTaskId={props.setExclusiveEditTaskId}
                 onTaskDragPointerDown={(e) =>
                   props.startBoardDrag(e, {
                     kind: 'task',
@@ -564,7 +570,7 @@ export function ColumnCard(props: {
         <Dialog.Portal>
           <Dialog.Overlay class="fixed inset-0 z-40 bg-black/60" />
           <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
-            <Dialog.Content
+            <ShellExcludedDialogContent
               ref={(el) => {
                 colDeleteContentEl = el
               }}
@@ -594,7 +600,7 @@ export function ColumnCard(props: {
                   {copy.delete}
                 </Button>
               </div>
-            </Dialog.Content>
+            </ShellExcludedDialogContent>
           </div>
         </Dialog.Portal>
       </Dialog>

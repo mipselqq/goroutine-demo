@@ -31,6 +31,9 @@ export type BoardPanCanvasProps = {
 }
 
 export function BoardPanCanvas(props: BoardPanCanvasProps) {
+  /** Only one task edit dialog open board-wide (avoids stacked modals after API error reopen). */
+  const [exclusiveEditTaskId, setExclusiveEditTaskId] = createSignal<string | null>(null)
+
   /** Coalesce pointermove pan to one store write per animation frame (fewer reactive runs). */
   let panMoveRaf = 0
   let pendingPan: { x: number; y: number } | null = null
@@ -160,6 +163,8 @@ export function BoardPanCanvas(props: BoardPanCanvasProps) {
                   boardDrag={props.boardDrag}
                   startBoardDrag={props.startBoardDrag}
                   onBoardError={props.onBoardError}
+                  exclusiveEditTaskId={exclusiveEditTaskId}
+                  setExclusiveEditTaskId={setExclusiveEditTaskId}
                 />
               )}
             </For>

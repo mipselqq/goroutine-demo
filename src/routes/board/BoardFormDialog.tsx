@@ -1,6 +1,29 @@
-import { Dialog } from '@kobalte/core/dialog'
+import { Dialog, useDialogContext } from '@kobalte/core/dialog'
 import { Show } from 'solid-js'
 import type { JSX } from 'solid-js'
+import { shellBypassExcludeEl } from '../../lib/shellBypassExclude'
+
+function BoardFormDialogPanel(props: {
+  title: string
+  srOnlyDescription?: string
+  children: JSX.Element
+}) {
+  const ctx = useDialogContext()
+  return (
+    <Dialog.Content
+      class="w-full max-w-2xl rounded-[var(--radius-card)] border border-border bg-bg-elevated p-6 shadow-card"
+      // Kobalte forwards `excludedElements` to DismissableLayer; dist `.d.ts` omits it (see DialogContent → mergeProps → DismissableLayer).
+      // @ts-expect-error — excludedElements supported at runtime
+      excludedElements={[ctx.triggerRef, shellBypassExcludeEl]}
+    >
+      <Dialog.Title class="text-lg font-semibold text-fg">{props.title}</Dialog.Title>
+      <Show when={props.srOnlyDescription}>
+        <Dialog.Description class="sr-only">{props.srOnlyDescription}</Dialog.Description>
+      </Show>
+      {props.children}
+    </Dialog.Content>
+  )
+}
 
 export function BoardFormDialog(props: {
   open: boolean
@@ -22,13 +45,9 @@ export function BoardFormDialog(props: {
           }
         />
         <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <Dialog.Content class="w-full max-w-2xl rounded-[var(--radius-card)] border border-border bg-bg-elevated p-6 shadow-card">
-            <Dialog.Title class="text-lg font-semibold text-fg">{props.title}</Dialog.Title>
-            <Show when={props.srOnlyDescription}>
-              <Dialog.Description class="sr-only">{props.srOnlyDescription}</Dialog.Description>
-            </Show>
+          <BoardFormDialogPanel title={props.title} srOnlyDescription={props.srOnlyDescription}>
             {props.children}
-          </Dialog.Content>
+          </BoardFormDialogPanel>
         </div>
       </Dialog.Portal>
     </Dialog>

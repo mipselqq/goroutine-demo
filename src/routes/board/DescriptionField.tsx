@@ -4,7 +4,7 @@ import { createEffect, Show } from 'solid-js'
 import { fitTextareaHeight } from '../../lib/fitTextareaHeight'
 
 export const DESCRIPTION_TEXTAREA_CLASS =
-  'kb-focus-ring box-border min-h-0 resize-none rounded-[var(--radius-control)] border border-border bg-bg px-3 py-2 text-sm leading-normal text-fg'
+  'kb-focus-ring box-border min-h-0 max-h-[min(75svh,33rem)] resize-none overflow-x-hidden rounded-[var(--radius-control)] border border-border bg-bg px-3 py-2 text-sm leading-normal text-fg'
 
 export function DescriptionField(props: {
   label: string
