@@ -12,7 +12,7 @@ export function BoardHeaderSkeleton() {
         <div class="h-7 min-h-[1.75rem] min-w-0 flex-1 rounded-md shimmer" />
         <div class="h-5 w-[5.5rem] shrink-0 rounded-md border border-border/40 shimmer" />
       </div>
-      <div class="h-[1.4375rem] w-full max-w-xl rounded shimmer" />
+      <div class="h-[1.58rem] w-full max-w-xl rounded shimmer" />
     </div>
   )
 }

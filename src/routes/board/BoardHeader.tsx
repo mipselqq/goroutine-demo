@@ -1,7 +1,7 @@
 import { Show } from 'solid-js'
 import type { Accessor } from 'solid-js'
 import { copy } from '../../lib/copy'
-import { BOARD_DESCRIPTION_TEXT_CLASS } from '../../lib/boardViewConstants'
+import { BOARD_HEADER_DESCRIPTION_TEXT_CLASS } from '../../lib/boardViewConstants'
 import type { AggregateBoardResponse } from '../../lib/api'
 
 export function BoardHeader(props: {
@@ -16,7 +16,7 @@ export function BoardHeader(props: {
           {props.statsLine()}
         </span>
       </div>
-      <p class={`min-h-[1.4375rem] leading-snug ${BOARD_DESCRIPTION_TEXT_CLASS}`}>
+      <p class={`min-h-[1.58rem] leading-snug ${BOARD_HEADER_DESCRIPTION_TEXT_CLASS}`}>
         <Show
           when={(props.board.description ?? '').trim()}
           fallback={<span class="select-none text-fg/[0.2]">{copy.noDescription}</span>}
