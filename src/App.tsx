@@ -1,7 +1,6 @@
 import { onMount, type ParentComponent, Show, Suspense, createMemo, lazy } from 'solid-js'
 import { Route, Router, useNavigate } from '@solidjs/router'
 import { AppShell } from './components/AppShell'
-import { copy } from './lib/copy'
 import { getAuthEpoch, getToken } from './lib/auth'
 
 const AuthPage = lazy(() => import('./routes/AuthPage'))
@@ -17,15 +16,7 @@ function NavigateReplace(props: { href: string }) {
 }
 
 const RouteSuspense: ParentComponent = (props) => (
-  <Suspense
-    fallback={
-      <div class="flex flex-1 items-center justify-center text-sm text-fg-muted">
-        {copy.routeLoading}
-      </div>
-    }
-  >
-    {props.children}
-  </Suspense>
+  <Suspense fallback={<div class="flex min-h-0 flex-1 flex-col" aria-busy="true" />}>{props.children}</Suspense>
 )
 
 const PrivateRoute: ParentComponent = (props) => {
