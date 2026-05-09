@@ -1,5 +1,5 @@
 import type { Accessor } from 'solid-js'
-import { BOARD_PAGE_INITIAL_VIEW } from '../../lib/boardViewConstants'
+import { BOARD_PAGE_INITIAL_VIEW, COLUMN_CARD_HEADER_MIN_H_CLASS } from '../../lib/boardViewConstants'
 import { SKELETON_FADE_MS } from '../../lib/delayedSkeleton'
 
 const skeletonCols = [0, 1, 2]
@@ -42,7 +42,7 @@ export function BoardLoadingSkeleton(props: { visible: Accessor<boolean> }) {
           <div class="flex h-full min-h-[28rem] flex-row flex-nowrap items-stretch gap-3 p-6 antialiased [text-rendering:geometricPrecision]">
             {skeletonCols.map(() => (
               <div class="flex w-80 shrink-0 flex-col overflow-visible rounded-[var(--radius-card)] border border-border bg-bg-elevated shadow-[0_4px_14px_rgb(0_0_0/0.26)]">
-                <div class="flex flex-col gap-1 border-b border-border px-4 py-3">
+                <div class={`flex flex-col gap-1 border-b border-border px-4 py-3 ${COLUMN_CARD_HEADER_MIN_H_CLASS}`}>
                   <div class="h-7 w-4/5 rounded shimmer" />
                   <div class="h-3 w-1/3 rounded shimmer" />
                   <div class="mt-2 h-[2.1rem] w-full rounded shimmer" />

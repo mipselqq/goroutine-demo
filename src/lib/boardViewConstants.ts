@@ -6,6 +6,9 @@ export const BOARD_DESCRIPTION_TEXT_CLASS = 'text-[0.8625rem]'
 /** Gap under titles / between stacked header lines (`spacing.1` ÷ 1.4). */
 export const BOARD_INLINE_STACK_GAP_CLASS = 'mt-[calc(0.25rem/1.4)]'
 
+/** Column header strip: same min height on every column so `border-b` aligns across the board. */
+export const COLUMN_CARD_HEADER_MIN_H_CLASS = 'min-h-[6.2rem]'
+
 /** Initial pan/zoom on board page load — must match loading skeleton transform. */
 export const BOARD_PAGE_INITIAL_VIEW: BoardPanView = { x: 80, y: 48, scale: 1 }
 

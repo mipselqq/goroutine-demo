@@ -26,7 +26,7 @@ import { DescriptionField } from './DescriptionField'
 import { FieldLabelWithCount } from './FieldLabelWithCount'
 import type { BoardDragPayload, BoardDragState } from './boardDragTypes'
 import { TaskRow } from './TaskRow'
-import { BOARD_INLINE_STACK_GAP_CLASS } from '../../lib/boardViewConstants'
+import { BOARD_INLINE_STACK_GAP_CLASS, COLUMN_CARD_HEADER_MIN_H_CLASS } from '../../lib/boardViewConstants'
 import { validateEntityName, validateOptionalDescription } from '../../lib/clientValidation'
 import { isClientValidationBypassed } from '../../lib/clientValidationBypass'
 import { userFacingApiError } from '../../lib/apiUserMessage'
@@ -305,7 +305,7 @@ export function ColumnCard(props: {
       data-board-interactive=""
     >
       <div
-        class={`flex flex-col gap-1 border-b border-border ${
+        class={`flex flex-col gap-1 border-b border-border ${COLUMN_CARD_HEADER_MIN_H_CLASS} ${
           columnDescTrimmed() ? 'pt-2 pb-0' : 'py-1.5'
         }`}
       >
