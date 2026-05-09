@@ -13,7 +13,7 @@ import {
   type AggregateBoardResponse,
 } from '../lib/api'
 import { cloneBoard, cloneBoardShallowColumns } from '../lib/optimistic'
-import { createDelayedSkeletonShow } from '../lib/delayedSkeleton'
+import { createDelayedSkeletonShow, SKELETON_FADE_MS } from '../lib/delayedSkeleton'
 import {
   columnReorderSlot,
   sameTaskLayout,
@@ -351,7 +351,24 @@ export default function BoardPage() {
   return (
     <div class="flex min-h-0 flex-1 flex-col">
       <div class="flex items-center gap-3 border-b border-border px-4 py-3">
-        <Show when={store.board} fallback={<BoardHeaderSkeleton />}>
+        <Show
+          when={store.board}
+          fallback={
+            <Show when={agg.loading} fallback={<div class="min-h-[4rem] min-w-0 flex-1" aria-hidden="true" />}>
+              <div
+                class="min-w-0 flex-1 transition-opacity ease-out"
+                style={{ 'transition-duration': `${SKELETON_FADE_MS}ms` }}
+                classList={{
+                  'opacity-0': !boardSkeletonVisible(),
+                  'opacity-100': boardSkeletonVisible(),
+                }}
+                aria-busy="true"
+              >
+                <BoardHeaderSkeleton />
+              </div>
+            </Show>
+          }
+        >
           <BoardHeader board={store.board!} statsLine={statsLine} />
         </Show>
       </div>
@@ -363,25 +380,27 @@ export default function BoardPage() {
       </Show>
 
       <Show when={!agg.loading || store.board} fallback={<BoardLoadingSkeleton visible={boardSkeletonVisible} />}>
-        <Show when={store.board} fallback={<p class="p-6 text-sm text-fg-muted">{copy.loadingBoard}</p>}>
-          <BoardPanCanvas
-            boardId={params.boardId}
-            board={store.board!}
-            view={view}
-            setView={setView}
-            pan={pan}
-            setPan={setPan}
-            beginPan={beginPan}
-            onWheelCanvas={onWheelCanvas}
-            setBoard={setBoard}
-            setColumnEl={setColumnEl}
-            setTaskAreaEl={setTaskAreaEl}
-            boardDrag={boardDrag}
-            startBoardDrag={startBoardDrag}
-            onBoardError={() => setStore('loadError', copy.somethingWrong)}
-            columnElLookup={(id) => columnEls.get(id)}
-            onViewportRef={follow.setViewport}
-          />
+        <Show when={store.board} keyed>
+          {(b) => (
+            <BoardPanCanvas
+              boardId={params.boardId}
+              board={b}
+              view={view}
+              setView={setView}
+              pan={pan}
+              setPan={setPan}
+              beginPan={beginPan}
+              onWheelCanvas={onWheelCanvas}
+              setBoard={setBoard}
+              setColumnEl={setColumnEl}
+              setTaskAreaEl={setTaskAreaEl}
+              boardDrag={boardDrag}
+              startBoardDrag={startBoardDrag}
+              onBoardError={() => setStore('loadError', copy.somethingWrong)}
+              columnElLookup={(id) => columnEls.get(id)}
+              onViewportRef={follow.setViewport}
+            />
+          )}
         </Show>
       </Show>
     </div>
