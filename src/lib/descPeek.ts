@@ -12,6 +12,8 @@ type PeekOpts = {
   /** Clear expanded state when this signal changes (e.g. board drag generation). */
   resetOn?: Accessor<unknown>
   delayMs?: number
+  /** If set and returns false, hover does not run expand (e.g. text fits in collapsed clip). */
+  canPeek?: () => boolean
 }
 
 export function createDescriptionPeek(opts?: PeekOpts) {
@@ -26,6 +28,7 @@ export function createDescriptionPeek(opts?: PeekOpts) {
     setPeek(false)
   }
   const schedule = () => {
+    if (opts?.canPeek && !opts.canPeek()) return
     clear()
     timer = window.setTimeout(() => {
       timer = null

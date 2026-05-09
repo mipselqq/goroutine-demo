@@ -16,7 +16,7 @@ import {
   type TaskResponse,
 } from '../../lib/api'
 import { createDescriptionPeek, DESCRIPTION_DESC_CLOSE, DESCRIPTION_DESC_OPEN } from '../../lib/descPeek'
-import { createDescPeekNeedsFade } from '../../lib/descPeekOverflow'
+import { collapsedDescClipOverflows, createDescPeekNeedsFade } from '../../lib/descPeekOverflow'
 import { BoardFormDialog } from './BoardFormDialog'
 import { ShellExcludedDialogContent } from './ShellExcludedDialogContent'
 import { DescriptionField } from './DescriptionField'
@@ -39,7 +39,10 @@ export function TaskRow(props: {
   exclusiveEditTaskId: Accessor<string | null>
   setExclusiveEditTaskId: Setter<string | null>
 }) {
-  const taskDesc = createDescriptionPeek()
+  let taskDescClipEl: HTMLElement | undefined
+  const taskDesc = createDescriptionPeek({
+    canPeek: () => (taskDescClipEl ? collapsedDescClipOverflows(taskDescClipEl) : false),
+  })
   const [taskDescFade, attachTaskDescClip] = createDescPeekNeedsFade({
     peek: taskDesc.peek,
     refresh: () => `${props.task.id}\0${props.task.description ?? ''}`,
@@ -249,7 +252,10 @@ export function TaskRow(props: {
         >
           <div class="min-w-0 pr-9 font-medium leading-tight text-fg">{props.task.name}</div>
           <div
-            ref={(el) => attachTaskDescClip(el ?? undefined)}
+            ref={(el) => {
+              taskDescClipEl = el ?? undefined
+              attachTaskDescClip(el ?? undefined)
+            }}
             class={`relative -ml-3 -mr-10 w-[calc(100%+3.25rem)] max-w-none overflow-hidden break-words ${
               taskDescTrimmed() ? 'mt-2' : 'mt-1'
             } ${

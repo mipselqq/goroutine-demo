@@ -40,7 +40,7 @@ import {
   DESCRIPTION_DESC_CLOSE,
   DESCRIPTION_DESC_OPEN,
 } from '../lib/descPeek'
-import { createDescPeekNeedsFade } from '../lib/descPeekOverflow'
+import { collapsedDescClipOverflows, createDescPeekNeedsFade } from '../lib/descPeekOverflow'
 import { BoardFormDialog } from './board/BoardFormDialog'
 import { BoardPopulateBanner } from './board/BoardPopulateBanner'
 import { DescriptionField } from './board/DescriptionField'
@@ -55,14 +55,21 @@ function tempId() {
 }
 
 function BoardDescriptionPeek(props: { text: string; grabGen: Accessor<number> }) {
-  const desc = createDescriptionPeek({ resetOn: props.grabGen })
+  let clipEl: HTMLElement | undefined
+  const desc = createDescriptionPeek({
+    resetOn: props.grabGen,
+    canPeek: () => (clipEl ? collapsedDescClipOverflows(clipEl) : false),
+  })
   const [needsFade, attachClip] = createDescPeekNeedsFade({
     peek: desc.peek,
     refresh: () => `${props.text}\0${props.grabGen()}`,
   })
   return (
     <span
-      ref={(el) => attachClip(el ?? undefined)}
+      ref={(el) => {
+        clipEl = el ?? undefined
+        attachClip(el ?? undefined)
+      }}
       class={`relative mt-0.5 block leading-tight [overflow-wrap:anywhere] ${BOARD_DESCRIPTION_TEXT_CLASS} ${
         desc.peek()
           ? 'scrollbar-none max-h-[min(65vh,22rem)] overflow-y-auto'

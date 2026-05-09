@@ -1,5 +1,13 @@
 import { createEffect, createSignal, onCleanup, type Accessor } from 'solid-js'
 
+/** Subpixel / rounding slack vs the clip box (matches hover expand gate). */
+export const DESC_PEEK_OVERFLOW_EPS_PX = 1
+
+/** True when collapsed clip content exceeds visible height (needs fade / expand-on-hover). */
+export function collapsedDescClipOverflows(el: HTMLElement): boolean {
+  return el.scrollHeight > el.clientHeight + DESC_PEEK_OVERFLOW_EPS_PX
+}
+
 /**
  * When description is collapsed with max-height, show a bottom fade only if content overflows.
  */
@@ -15,7 +23,7 @@ export function createDescPeekNeedsFade(opts: { peek: Accessor<boolean>; refresh
       setNeedsFade(false)
       return
     }
-    setNeedsFade(node.scrollHeight > node.clientHeight + 1)
+    setNeedsFade(collapsedDescClipOverflows(node))
   }
 
   const attachClipEl = (el: HTMLElement | undefined) => {

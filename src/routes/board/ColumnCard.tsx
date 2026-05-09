@@ -20,7 +20,7 @@ import {
 import { cloneBoard } from '../../lib/optimistic'
 import { taskDropLineBeforeFullIndex } from '../../lib/boardPointerDnD'
 import { createDescriptionPeek, DESCRIPTION_DESC_CLOSE, DESCRIPTION_DESC_OPEN } from '../../lib/descPeek'
-import { createDescPeekNeedsFade } from '../../lib/descPeekOverflow'
+import { collapsedDescClipOverflows, createDescPeekNeedsFade } from '../../lib/descPeekOverflow'
 import { BoardFormDialog } from './BoardFormDialog'
 import { ShellExcludedDialogContent } from './ShellExcludedDialogContent'
 import { DescriptionField } from './DescriptionField'
@@ -45,7 +45,10 @@ export function ColumnCard(props: {
   exclusiveEditTaskId: Accessor<string | null>
   setExclusiveEditTaskId: Setter<string | null>
 }) {
-  const colDesc = createDescriptionPeek()
+  let colDescClipEl: HTMLElement | undefined
+  const colDesc = createDescriptionPeek({
+    canPeek: () => (colDescClipEl ? collapsedDescClipOverflows(colDescClipEl) : false),
+  })
   const [colDescFade, attachColDescClip] = createDescPeekNeedsFade({
     peek: colDesc.peek,
     refresh: () => `${props.column.id}\0${props.column.description ?? ''}`,
@@ -329,7 +332,10 @@ export function ColumnCard(props: {
               {formatTaskColumnCount(props.column.tasks.length)}
             </p>
             <div
-              ref={(el) => attachColDescClip(el ?? undefined)}
+              ref={(el) => {
+                colDescClipEl = el ?? undefined
+                attachColDescClip(el ?? undefined)
+              }}
               class={`relative overflow-hidden leading-tight [overflow-wrap:anywhere] ${BOARD_DESCRIPTION_TEXT_CLASS} ${
                 columnDescTrimmed() ? 'mt-2' : 'mt-1'
               } ${
