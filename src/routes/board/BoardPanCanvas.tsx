@@ -25,7 +25,7 @@ export type BoardPanCanvasProps = {
   setTaskAreaEl: (columnId: string, el: HTMLElement | undefined) => void
   boardDrag: () => BoardDragState
   startBoardDrag: (e: PointerEvent, payload: BoardDragPayload) => void
-  onBoardError: () => void
+  onBoardError: (err?: unknown) => void
   columnElLookup: (id: string) => HTMLElement | undefined
   onViewportRef?: (el: HTMLElement | undefined) => void
 }
@@ -163,7 +163,7 @@ export function BoardPanCanvas(props: BoardPanCanvasProps) {
                 />
               )}
             </For>
-            <AddColumnZone boardId={props.boardId} setBoard={props.setBoard} onError={props.onBoardError} />
+            <AddColumnZone boardId={props.boardId} setBoard={props.setBoard} />
           </div>
         </div>
         <BoardDragOverlay

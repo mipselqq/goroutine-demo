@@ -11,6 +11,7 @@ import {
   patchColumn,
   POSITION_BASE,
   DESCRIPTION_MAX_CHARS,
+  NAME_MAX_CHARS,
   type AggregateBoardResponse,
   type AggregateColumnResponse,
   type TaskResponse,
@@ -21,9 +22,14 @@ import { createDescriptionPeek, DESCRIPTION_DESC_CLOSE, DESCRIPTION_DESC_OPEN } 
 import { createDescPeekNeedsFade } from '../../lib/descPeekOverflow'
 import { BoardFormDialog } from './BoardFormDialog'
 import { DescriptionField } from './DescriptionField'
+import { FieldLabelWithCount } from './FieldLabelWithCount'
 import type { BoardDragPayload, BoardDragState } from './boardDragTypes'
 import { TaskRow } from './TaskRow'
 import { BOARD_DESCRIPTION_TEXT_CLASS } from '../../lib/boardViewConstants'
+import { validateEntityName, validateOptionalDescription } from '../../lib/clientValidation'
+import { isClientValidationBypassed } from '../../lib/clientValidationBypass'
+import { userFacingApiError } from '../../lib/apiUserMessage'
+import { FormApiAlert } from './FormApiAlert'
 
 export function ColumnCard(props: {
   boardId: string
@@ -33,7 +39,7 @@ export function ColumnCard(props: {
   setTaskAreaEl: (columnId: string, el: HTMLElement | undefined) => void
   boardDrag: () => BoardDragState
   startBoardDrag: (e: PointerEvent, payload: BoardDragPayload) => void
-  onBoardError: () => void
+  onBoardError: (err?: unknown) => void
 }) {
   const colDesc = createDescriptionPeek()
   const [colDescFade, attachColDescClip] = createDescPeekNeedsFade({
@@ -47,6 +53,7 @@ export function ColumnCard(props: {
   const [newTaskName, setNewTaskName] = createSignal('')
   const [newTaskDesc, setNewTaskDesc] = createSignal('')
   const [newTaskErr, setNewTaskErr] = createSignal<string | null>(null)
+  const [colEditErr, setColEditErr] = createSignal<string | null>(null)
   const [name, setName] = createSignal(props.column.name)
   const [desc, setDesc] = createSignal(props.column.description)
 
@@ -118,6 +125,7 @@ export function ColumnCard(props: {
           const ddy = ev.clientY - oy
           if (ddx * ddx + ddy * ddy < 12 * 12) {
             setEditOpen(true)
+            setColEditErr(null)
           }
           lastColQuickTap = { t: Date.now(), x: ev.clientX, y: ev.clientY }
         }
@@ -136,10 +144,23 @@ export function ColumnCard(props: {
   }
 
   const saveCol = async () => {
+    if (!isClientValidationBypassed()) {
+      const vn = validateEntityName(name())
+      if (vn) {
+        setColEditErr(vn)
+        return
+      }
+      const vd = validateOptionalDescription(desc())
+      if (vd) {
+        setColEditErr(vd)
+        return
+      }
+    }
+    setColEditErr(null)
     const prevName = props.column.name
     const prevDesc = props.column.description
-    const nm = name().trim() || copy.newColumnName
-    const ds = desc()
+    const nm = name().trim()
+    const ds = desc().trim()
     props.setBoard((b) => {
       const c = b.columns.find((x) => x.id === props.column.id)
       if (c) {
@@ -150,7 +171,7 @@ export function ColumnCard(props: {
     setEditOpen(false)
     try {
       await patchColumn(props.boardId, props.column.id, { name: nm, description: ds })
-    } catch {
+    } catch (e) {
       props.setBoard((b) => {
         const c = b.columns.find((x) => x.id === props.column.id)
         if (c) {
@@ -158,7 +179,13 @@ export function ColumnCard(props: {
           c.description = prevDesc
         }
       })
-      props.onBoardError()
+      const msg = userFacingApiError(e)
+      queueMicrotask(() => {
+        setName(nm)
+        setDesc(ds)
+        setEditOpen(true)
+        setColEditErr(msg)
+      })
     }
   }
 
@@ -171,7 +198,7 @@ export function ColumnCard(props: {
     setDelOpen(false)
     try {
       await deleteColumn(props.boardId, props.column.id)
-    } catch {
+    } catch (e) {
       if (snapshot) {
         props.setBoard((b) => {
           b.columns = snapshot!.columns.map((c) => ({
@@ -180,18 +207,26 @@ export function ColumnCard(props: {
           }))
         })
       }
-      props.onBoardError()
+      props.onBoardError(e)
     }
   }
 
   const submitNewTask = async () => {
-    const tname = newTaskName().trim()
-    if (!tname) {
-      setNewTaskErr(copy.nameRequired)
-      return
+    if (!isClientValidationBypassed()) {
+      const vn = validateEntityName(newTaskName())
+      if (vn) {
+        setNewTaskErr(vn)
+        return
+      }
+      const vd = validateOptionalDescription(newTaskDesc())
+      if (vd) {
+        setNewTaskErr(vd)
+        return
+      }
     }
     setNewTaskErr(null)
-    const tdesc = newTaskDesc()
+    const tname = newTaskName().trim()
+    const tdesc = newTaskDesc().trim()
     const tid = `optim-${crypto.randomUUID()}`
     const optimistic: TaskResponse = {
       id: tid,
@@ -218,12 +253,15 @@ export function ColumnCard(props: {
         const c = b.columns.find((x) => x.id === props.column.id)
         if (c) c.tasks = c.tasks.map((t) => (t.id === tid ? data : t))
       })
-    } catch {
+    } catch (e) {
       props.setBoard((b) => {
         const c = b.columns.find((x) => x.id === props.column.id)
         if (c) c.tasks = c.tasks.filter((t) => t.id !== tid)
       })
-      props.onBoardError()
+      setNewTaskName(tname)
+      setNewTaskDesc(tdesc)
+      setNewTaskOpen(true)
+      setNewTaskErr(userFacingApiError(e))
     }
   }
 
@@ -424,12 +462,15 @@ export function ColumnCard(props: {
         }}>
         <div class="mt-4 flex flex-col gap-3">
           <TextField class="flex flex-col gap-1">
-            <TextField.Label class="text-sm font-medium">{copy.taskName}</TextField.Label>
+            <TextField.Label class="block w-full">
+              <FieldLabelWithCount label={copy.taskName} length={newTaskName().length} max={NAME_MAX_CHARS} />
+            </TextField.Label>
             <TextField.Input
               ref={(el) => (newTaskNameEl = el)}
               class="kb-focus-ring rounded-[var(--radius-control)] border border-border bg-bg px-3 py-2 text-fg"
               placeholder={copy.newTaskName}
               value={newTaskName()}
+              maxLength={isClientValidationBypassed() ? undefined : NAME_MAX_CHARS}
               onInput={(e) => setNewTaskName(e.currentTarget.value)}
               onKeyDown={enterFocusDescription(() => newTaskDescEl)}
             />
@@ -438,15 +479,14 @@ export function ColumnCard(props: {
             label={copy.taskDescription}
             value={newTaskDesc}
             onInput={setNewTaskDesc}
-            maxLength={DESCRIPTION_MAX_CHARS}
+            maxLength={isClientValidationBypassed() ? undefined : DESCRIPTION_MAX_CHARS}
+            charCountMax={DESCRIPTION_MAX_CHARS}
             placeholder={copy.newTaskDescription}
             ref={(el) => (newTaskDescEl = el)}
             onKeyDown={enterCtrlMetaSubmit(submitNewTask)}
           />
           <Show when={newTaskErr()}>
-            <p class="text-sm text-danger" role="alert">
-              {newTaskErr()}
-            </p>
+            <FormApiAlert message={newTaskErr()!} />
           </Show>
         </div>
         <div class="mt-6 flex justify-end gap-2">
@@ -467,14 +507,24 @@ export function ColumnCard(props: {
         </div>
       </BoardFormDialog>
 
-      <BoardFormDialog title={copy.editColumn} open={editOpen()} onOpenChange={setEditOpen}>
+      <BoardFormDialog
+        title={copy.editColumn}
+        open={editOpen()}
+        onOpenChange={(open) => {
+          setEditOpen(open)
+          if (!open) setColEditErr(null)
+        }}
+      >
         <div class="mt-4 flex flex-col gap-3">
           <TextField class="flex flex-col gap-1">
-            <TextField.Label class="text-sm font-medium">{copy.columnName}</TextField.Label>
+            <TextField.Label class="block w-full">
+              <FieldLabelWithCount label={copy.columnName} length={name().length} max={NAME_MAX_CHARS} />
+            </TextField.Label>
             <TextField.Input
               ref={(el) => (colEditNameEl = el)}
               class="kb-focus-ring rounded-[var(--radius-control)] border border-border bg-bg px-3 py-2 text-fg"
               value={name()}
+              maxLength={isClientValidationBypassed() ? undefined : NAME_MAX_CHARS}
               onInput={(e) => setName(e.currentTarget.value)}
               onKeyDown={enterFocusDescription(() => colEditDescEl)}
             />
@@ -483,10 +533,14 @@ export function ColumnCard(props: {
             label={copy.columnDescription}
             value={desc}
             onInput={setDesc}
-            maxLength={DESCRIPTION_MAX_CHARS}
+            maxLength={isClientValidationBypassed() ? undefined : DESCRIPTION_MAX_CHARS}
+            charCountMax={DESCRIPTION_MAX_CHARS}
             ref={(el) => (colEditDescEl = el)}
             onKeyDown={enterCtrlMetaSubmit(saveCol)}
           />
+          <Show when={colEditErr()}>
+            <FormApiAlert message={colEditErr()!} />
+          </Show>
         </div>
         <div class="mt-6 flex justify-end gap-2">
           <Button

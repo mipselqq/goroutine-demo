@@ -1,10 +1,10 @@
 import { createEffect, createSignal, type Accessor } from 'solid-js'
 import { produce, type SetStoreFunction } from 'solid-js/store'
-import { ApiError, type AggregateBoardResponse } from './api'
+import { type AggregateBoardResponse } from './api'
 import { mergeCreatedColumnIntoBoard, mergeCreatedTaskIntoBoard } from './boardAggregateMerge'
 import { BOARD_POPULATE_CINEMA_VIEW } from './boardViewConstants'
 import type { BoardPanView } from './boardPanView'
-import { copy } from './copy'
+import { userFacingApiError } from './apiUserMessage'
 import {
   consumePopulateStressSpec,
   runPopulateStressBoardLive,
@@ -70,10 +70,7 @@ export function useBoardPopulateCinema(options: {
           },
         )
       } catch (e) {
-        options.setStore(
-          'loadError',
-          e instanceof ApiError ? e.message : copy.somethingWrong,
-        )
+        options.setStore('loadError', userFacingApiError(e))
       } finally {
         setPopulateLive(null)
       }

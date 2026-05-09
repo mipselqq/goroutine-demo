@@ -18,6 +18,7 @@ import {
   DESCRIPTION_MAX_CHARS,
   getBoardAggregate,
   listBoards,
+  NAME_MAX_CHARS,
   patchBoard,
   type BoardResponse,
 } from '../lib/api'
@@ -42,6 +43,11 @@ import { createDescPeekNeedsFade } from '../lib/descPeekOverflow'
 import { BoardFormDialog } from './board/BoardFormDialog'
 import { BoardPopulateBanner } from './board/BoardPopulateBanner'
 import { DescriptionField } from './board/DescriptionField'
+import { FieldLabelWithCount } from './board/FieldLabelWithCount'
+import { FormApiAlert } from './board/FormApiAlert'
+import { validateEntityName, validateOptionalDescription } from '../lib/clientValidation'
+import { isClientValidationBypassed } from '../lib/clientValidationBypass'
+import { userFacingApiError } from '../lib/apiUserMessage'
 
 function tempId() {
   return `optim-${crypto.randomUUID()}`
@@ -104,8 +110,7 @@ export default function BoardsPage() {
       navigate('/login', { replace: true })
       return
     }
-    if (e instanceof ApiError) setLoadError(e.message)
-    else setLoadError(copy.somethingWrong)
+    setLoadError(userFacingApiError(e))
   })
 
   const skeletonRows = [0, 1, 2, 3, 4]
@@ -123,6 +128,7 @@ export default function BoardsPage() {
   const [createName, setCreateName] = createSignal('')
   const [createDesc, setCreateDesc] = createSignal('')
   const [createFieldError, setCreateFieldError] = createSignal<string | null>(null)
+  const [editFieldError, setEditFieldError] = createSignal<string | null>(null)
   const [populateBusy, setPopulateBusy] = createSignal(false)
   const [exportOpen, setExportOpen] = createSignal(false)
   const [exportBoardId, setExportBoardId] = createSignal('')
@@ -149,15 +155,29 @@ export default function BoardsPage() {
     setEditTarget(b)
     setEditName(b.name)
     setEditDesc(b.description)
+    setEditFieldError(null)
     setEditOpen(true)
   }
 
   const saveEdit = async () => {
     const b = editTarget()
     if (!b) return
+    if (!isClientValidationBypassed()) {
+      const vn = validateEntityName(editName())
+      if (vn) {
+        setEditFieldError(vn)
+        return
+      }
+      const vd = validateOptionalDescription(editDesc())
+      if (vd) {
+        setEditFieldError(vd)
+        return
+      }
+    }
+    setEditFieldError(null)
     const prev = boards() ?? []
-    const name = editName().trim() || copy.newBoardName
-    const description = editDesc()
+    const name = editName().trim()
+    const description = editDesc().trim()
     setBoards((list) =>
       list?.map((x) => (x.id === b.id ? { ...x, name, description } : x)),
     )
@@ -165,9 +185,10 @@ export default function BoardsPage() {
     try {
       const { data } = await patchBoard(b.id, { name, description })
       setBoards((list) => list?.map((x) => (x.id === b.id ? { ...data, optimistic: x.optimistic } : x)))
-    } catch {
+    } catch (e) {
       setBoards(prev)
-      setLoadError(copy.somethingWrong)
+      setEditOpen(true)
+      setEditFieldError(userFacingApiError(e))
     }
   }
 
@@ -179,20 +200,28 @@ export default function BoardsPage() {
     setDeleteOpen(false)
     try {
       await deleteBoard(b.id)
-    } catch {
+    } catch (e) {
       setBoards(prev)
-      setLoadError(copy.somethingWrong)
+      setLoadError(userFacingApiError(e))
     }
   }
 
   const submitCreateBoard = async () => {
-    const name = createName().trim()
-    if (!name) {
-      setCreateFieldError(copy.nameRequired)
-      return
+    if (!isClientValidationBypassed()) {
+      const vn = validateEntityName(createName())
+      if (vn) {
+        setCreateFieldError(vn)
+        return
+      }
+      const vd = validateOptionalDescription(createDesc())
+      if (vd) {
+        setCreateFieldError(vd)
+        return
+      }
     }
     setCreateFieldError(null)
-    const description = createDesc()
+    const name = createName().trim()
+    const description = createDesc().trim()
     const id = tempId()
     const optimistic: BoardRow = {
       id,
@@ -212,14 +241,17 @@ export default function BoardsPage() {
       const { data } = await createBoard({ name, description })
       setBoards((list) => list?.map((x) => (x.id === id ? { ...data, optimistic: false } : x)))
       setCachedBoardCounts(data.id, 0, 0)
-    } catch {
+    } catch (e) {
       setBoards(prev)
-      setLoadError(copy.somethingWrong)
+      setCreateName(name)
+      setCreateDesc(description)
+      setCreateOpen(true)
+      setCreateFieldError(userFacingApiError(e))
     }
   }
 
   const runPopulateStressBoard = async () => {
-    if (populateBusy()) return
+    if (populateBusy() || importBusy()) return
     setPopulateBusy(true)
     setLoadError(null)
     try {
@@ -233,7 +265,7 @@ export default function BoardsPage() {
       setCachedBoardCounts(board.id, 0, 0)
       navigate(`/boards/${board.id}?populate=1`)
     } catch (e) {
-      setLoadError(e instanceof ApiError ? e.message : copy.somethingWrong)
+      setLoadError(userFacingApiError(e))
     } finally {
       setPopulateBusy(false)
     }
@@ -259,17 +291,35 @@ export default function BoardsPage() {
       await copyBoardExportToClipboard(payload)
       setExportOpen(false)
     } catch (e) {
-      if (e instanceof ApiError) setLoadError(e.message)
+      if (e instanceof ApiError) setLoadError(userFacingApiError(e))
       else if (e instanceof DOMException && e.name === 'NotAllowedError') {
         setLoadError(copy.clipboardAccessDenied)
-      } else setLoadError(copy.somethingWrong)
+      } else setLoadError(userFacingApiError(e))
     } finally {
       setExportBusy(false)
     }
   }
 
+  const applyBoardImportFromPayload = async (payload: BoardExportV1) => {
+    const { data } = await createBoard({
+      name: payload.board.name,
+      description: payload.board.description,
+    })
+    setBoards((list) => [...(list ?? []), data])
+    const totalCols = payload.columns.length
+    const totalTasks = payload.columns.reduce((n, c) => n + c.tasks.length, 0)
+    setCachedBoardCounts(data.id, 0, 0)
+    await runImportBoardLive(data.id, payload, {
+      onProgress: (p) => setImportProgress(p),
+      onColumn: () => {},
+      onTask: () => {},
+    })
+    setCachedBoardCounts(data.id, totalCols, totalTasks)
+    setImportProgress(null)
+  }
+
   const runPasteBoardJson = async () => {
-    if (importBusy()) return
+    if (importBusy() || populateBusy()) return
     setImportBusy(true)
     setLoadError(null)
     let raw: string
@@ -294,24 +344,35 @@ export default function BoardsPage() {
       return
     }
     try {
-      const { data } = await createBoard({
-        name: payload.board.name,
-        description: payload.board.description,
-      })
-      setBoards((list) => [...(list ?? []), data])
-      const totalCols = payload.columns.length
-      const totalTasks = payload.columns.reduce((n, c) => n + c.tasks.length, 0)
-      setCachedBoardCounts(data.id, 0, 0)
-      await runImportBoardLive(data.id, payload, {
-        onProgress: (p) => setImportProgress(p),
-        onColumn: () => {},
-        onTask: () => {},
-      })
-      setCachedBoardCounts(data.id, totalCols, totalTasks)
-      setImportProgress(null)
+      await applyBoardImportFromPayload(payload)
     } catch (e) {
       setImportProgress(null)
-      setLoadError(e instanceof ApiError ? e.message : copy.somethingWrong)
+      setLoadError(userFacingApiError(e))
+    } finally {
+      setImportBusy(false)
+    }
+  }
+
+  const runExamplePopulateBoard = async () => {
+    if (importBusy() || populateBusy()) return
+    setImportBusy(true)
+    setLoadError(null)
+    try {
+      const res = await fetch(`${import.meta.env.BASE_URL}example_board.json`)
+      if (!res.ok) throw new Error('fetch')
+      const raw = await res.text()
+      let payload: BoardExportV1
+      try {
+        payload = parseBoardExportJson(raw)
+      } catch {
+        setLoadError(copy.importBoardInvalid)
+        return
+      }
+      await applyBoardImportFromPayload(payload)
+    } catch (e) {
+      setImportProgress(null)
+      if (e instanceof ApiError) setLoadError(userFacingApiError(e))
+      else setLoadError(userFacingApiError(e))
     } finally {
       setImportBusy(false)
     }
@@ -338,7 +399,7 @@ export default function BoardsPage() {
           <button
             type="button"
             class="kb-focus-ring rounded-[var(--radius-control)] border border-border bg-bg-muted px-3 py-2 text-sm font-medium text-fg hover:bg-bg disabled:pointer-events-none disabled:opacity-55"
-            disabled={importBusy()}
+            disabled={importBusy() || populateBusy()}
             onClick={() => void runPasteBoardJson()}
           >
             {copy.pasteBoardJson}
@@ -347,7 +408,7 @@ export default function BoardsPage() {
       </div>
 
       <Show when={loadError()}>
-        <p class="text-sm text-danger" role="alert">
+        <p class="whitespace-pre-line rounded-[var(--radius-card)] border border-danger/30 bg-danger/5 px-4 py-2.5 text-sm font-normal leading-normal text-danger" role="alert">
           {loadError()}
         </p>
       </Show>
@@ -482,7 +543,7 @@ export default function BoardsPage() {
             <button
               type="button"
               class={`kb-focus-ring flex w-full flex-col items-center justify-center gap-2 rounded-[var(--radius-card)] border border-dashed border-border bg-bg-muted/30 text-fg-muted transition hover:border-accent/40 hover:bg-bg-muted/50 hover:text-fg disabled:pointer-events-none disabled:opacity-55 ${rowHeightClass}`}
-              disabled={populateBusy()}
+              disabled={populateBusy() || importBusy()}
               onClick={() => void runPopulateStressBoard()}
             >
               <span class="text-lg font-medium text-fg">{copy.populateBoard}</span>
@@ -490,6 +551,18 @@ export default function BoardsPage() {
               <Show when={populateBusy()}>
                 <span class="text-center text-[11px] text-fg-muted">{copy.routeLoading}</span>
               </Show>
+            </button>
+          </li>
+
+          <li>
+            <button
+              type="button"
+              class={`kb-focus-ring flex w-full flex-col items-center justify-center gap-2 rounded-[var(--radius-card)] border border-dashed border-border bg-bg-muted/30 text-fg-muted transition hover:border-accent/40 hover:bg-bg-muted/50 hover:text-fg disabled:pointer-events-none disabled:opacity-55 ${rowHeightClass}`}
+              disabled={populateBusy() || importBusy()}
+              onClick={() => void runExamplePopulateBoard()}
+            >
+              <span class="text-lg font-medium text-fg">{copy.examplePopulateBoard}</span>
+              <span class="text-center text-xs">{copy.examplePopulateBlurb}</span>
             </button>
           </li>
         </ul>
@@ -549,12 +622,15 @@ export default function BoardsPage() {
       >
         <div class="mt-4 flex flex-col gap-3">
           <TextField class="flex flex-col gap-1.5">
-            <TextField.Label class="text-sm font-medium">{copy.boardName}</TextField.Label>
+            <TextField.Label class="block w-full">
+              <FieldLabelWithCount label={copy.boardName} length={createName().length} max={NAME_MAX_CHARS} />
+            </TextField.Label>
             <TextField.Input
               ref={(el) => (createNameInput = el)}
               class="kb-focus-ring rounded-[var(--radius-control)] border border-border bg-bg px-3 py-2 text-fg"
               placeholder={copy.newBoardName}
               value={createName()}
+              maxLength={isClientValidationBypassed() ? undefined : NAME_MAX_CHARS}
               onInput={(e) => setCreateName(e.currentTarget.value)}
               onKeyDown={enterFocusDescription(() => createDescInput)}
             />
@@ -563,15 +639,14 @@ export default function BoardsPage() {
             label={copy.boardDescription}
             value={createDesc}
             onInput={setCreateDesc}
-            maxLength={DESCRIPTION_MAX_CHARS}
+            maxLength={isClientValidationBypassed() ? undefined : DESCRIPTION_MAX_CHARS}
+            charCountMax={DESCRIPTION_MAX_CHARS}
             placeholder={copy.newBoardDescription}
             ref={(el) => (createDescInput = el)}
             onKeyDown={enterCtrlMetaSubmit(submitCreateBoard)}
           />
           <Show when={createFieldError()}>
-            <p class="text-sm text-danger" role="alert">
-              {createFieldError()}
-            </p>
+            <FormApiAlert message={createFieldError()!} />
           </Show>
         </div>
         <div class="mt-6 flex justify-end gap-2">
@@ -597,15 +672,21 @@ export default function BoardsPage() {
         srOnlyDescription={copy.editBoard}
         backdropBlur
         open={editOpen()}
-        onOpenChange={setEditOpen}
+        onOpenChange={(open) => {
+          setEditOpen(open)
+          if (!open) setEditFieldError(null)
+        }}
       >
         <div class="mt-4 flex flex-col gap-3">
           <TextField class="flex flex-col gap-1.5">
-            <TextField.Label class="text-sm font-medium">{copy.boardName}</TextField.Label>
+            <TextField.Label class="block w-full">
+              <FieldLabelWithCount label={copy.boardName} length={editName().length} max={NAME_MAX_CHARS} />
+            </TextField.Label>
             <TextField.Input
               ref={(el) => (editNameInput = el)}
               class="kb-focus-ring rounded-[var(--radius-control)] border border-border bg-bg px-3 py-2 text-fg"
               value={editName()}
+              maxLength={isClientValidationBypassed() ? undefined : NAME_MAX_CHARS}
               onInput={(e) => setEditName(e.currentTarget.value)}
               onKeyDown={enterFocusDescription(() => editDescInput)}
             />
@@ -614,10 +695,14 @@ export default function BoardsPage() {
             label={copy.boardDescription}
             value={editDesc}
             onInput={setEditDesc}
-            maxLength={DESCRIPTION_MAX_CHARS}
+            maxLength={isClientValidationBypassed() ? undefined : DESCRIPTION_MAX_CHARS}
+            charCountMax={DESCRIPTION_MAX_CHARS}
             ref={(el) => (editDescInput = el)}
             onKeyDown={enterCtrlMetaSubmit(saveEdit)}
           />
+          <Show when={editFieldError()}>
+            <FormApiAlert message={editFieldError()!} />
+          </Show>
         </div>
         <div class="mt-6 flex justify-end gap-2">
           <Button

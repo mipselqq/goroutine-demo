@@ -1,7 +1,7 @@
 import { batch, createEffect, createMemo, createResource, createSignal, onCleanup, Show, untrack } from 'solid-js'
 import { createStore, produce } from 'solid-js/store'
 import { useLocation, useNavigate, useParams } from '@solidjs/router'
-import { copy, formatBoardCompactStats } from '../lib/copy'
+import { formatBoardCompactStats } from '../lib/copy'
 import { setCachedBoardCounts } from '../lib/boardCountCache'
 import {
   ApiError,
@@ -12,6 +12,7 @@ import {
   sortAggregate,
   type AggregateBoardResponse,
 } from '../lib/api'
+import { userFacingApiError } from '../lib/apiUserMessage'
 import { cloneBoard, cloneBoardShallowColumns } from '../lib/optimistic'
 import { createDelayedSkeletonShow, SKELETON_FADE_MS } from '../lib/delayedSkeleton'
 import {
@@ -72,7 +73,7 @@ export default function BoardPage() {
       navigate('/login', { replace: true })
       return
     }
-    setStore('loadError', err instanceof ApiError ? err.message : copy.somethingWrong)
+    setStore('loadError', userFacingApiError(err))
   })
 
   const [view, setView] = createStore({ ...BOARD_PAGE_INITIAL_VIEW })
@@ -225,9 +226,9 @@ export default function BoardPage() {
     const newIndex = store.board!.columns.findIndex((c) => c.id === columnId)
     const tp = newIndex + POSITION_BASE
     queueMicrotask(() => {
-      void moveColumn(params.boardId, columnId, { targetPosition: tp }).catch(() => {
+      void moveColumn(params.boardId, columnId, { targetPosition: tp }).catch((e: unknown) => {
         setStore('board', snap)
-        setStore('loadError', copy.somethingWrong)
+        setStore('loadError', userFacingApiError(e))
       })
     })
   }
@@ -247,9 +248,9 @@ export default function BoardPage() {
     void moveTask(params.boardId, fromColumnId, taskId, {
       targetColumnId,
       targetPosition: insertIndex + POSITION_BASE,
-    }).catch(() => {
+    }).catch((e: unknown) => {
       setStore('board', snap)
-      setStore('loadError', copy.somethingWrong)
+      setStore('loadError', userFacingApiError(e))
     })
   }
 
@@ -376,7 +377,9 @@ export default function BoardPage() {
       <BoardPopulateBanner progress={populateLive} />
 
       <Show when={store.loadError}>
-        <p class="px-4 py-2 text-sm text-danger">{store.loadError}</p>
+        <p class="whitespace-pre-line px-4 py-2.5 text-sm font-normal leading-normal text-danger" role="alert">
+          {store.loadError}
+        </p>
       </Show>
 
       <Show when={!agg.loading || store.board} fallback={<BoardLoadingSkeleton visible={boardSkeletonVisible} />}>
@@ -396,7 +399,7 @@ export default function BoardPage() {
               setTaskAreaEl={setTaskAreaEl}
               boardDrag={boardDrag}
               startBoardDrag={startBoardDrag}
-              onBoardError={() => setStore('loadError', copy.somethingWrong)}
+              onBoardError={(err) => setStore('loadError', userFacingApiError(err))}
               columnElLookup={(id) => columnEls.get(id)}
               onViewportRef={follow.setViewport}
             />

@@ -1,4 +1,5 @@
 import { getToken } from './auth'
+import { formatHttpErrorMessage } from './apiUserMessage'
 import { trackPending } from './pending'
 
 /** Remote API host (CORS must allow the SPA origin). */
@@ -87,6 +88,9 @@ export type UpdateColumnBody = { name?: string | null; description?: string | nu
 export type CreateTaskBody = { name?: string; description?: string }
 export type UpdateTaskBody = { name?: string | null; description?: string | null }
 
+/** Matches server domain validation (board/column/task names). */
+export const NAME_MAX_CHARS = 128
+
 /** Matches server validation (board / column / task descriptions). */
 export const DESCRIPTION_MAX_CHARS = 1024
 export const TASK_DESCRIPTION_MAX_CHARS = DESCRIPTION_MAX_CHARS
@@ -147,11 +151,7 @@ export async function apiRequest<T>(
   }).then(async (res) => {
     const data = (await parseJson(res)) as T
     if (!res.ok) {
-      const det = data as DetailedError
-      const msg =
-        typeof det?.message === 'string' && det.message.trim()
-          ? det.message
-          : res.statusText || 'Request failed'
+      const msg = formatHttpErrorMessage(res.status, data)
       throw new ApiError(msg, res.status, data)
     }
     return { res, data }

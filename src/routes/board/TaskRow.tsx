@@ -10,6 +10,7 @@ import {
   deleteTask,
   patchTask,
   DESCRIPTION_MAX_CHARS,
+  NAME_MAX_CHARS,
   type AggregateBoardResponse,
   type TaskResponse,
 } from '../../lib/api'
@@ -17,7 +18,12 @@ import { createDescriptionPeek, DESCRIPTION_DESC_CLOSE, DESCRIPTION_DESC_OPEN } 
 import { createDescPeekNeedsFade } from '../../lib/descPeekOverflow'
 import { BoardFormDialog } from './BoardFormDialog'
 import { DescriptionField } from './DescriptionField'
+import { FieldLabelWithCount } from './FieldLabelWithCount'
 import { BOARD_DESCRIPTION_TEXT_CLASS } from '../../lib/boardViewConstants'
+import { validateEntityName, validateOptionalDescription } from '../../lib/clientValidation'
+import { isClientValidationBypassed } from '../../lib/clientValidationBypass'
+import { userFacingApiError } from '../../lib/apiUserMessage'
+import { FormApiAlert } from './FormApiAlert'
 import type { BoardDragState } from './boardDragTypes'
 
 export function TaskRow(props: {
@@ -27,7 +33,7 @@ export function TaskRow(props: {
   setBoard: (fn: (b: AggregateBoardResponse) => void) => void
   boardDrag: () => BoardDragState
   onTaskDragPointerDown: (e: PointerEvent) => void
-  onError: () => void
+  onError: (err?: unknown) => void
 }) {
   const taskDesc = createDescriptionPeek()
   const [taskDescFade, attachTaskDescClip] = createDescPeekNeedsFade({
@@ -39,6 +45,7 @@ export function TaskRow(props: {
   const [delOpen, setDelOpen] = createSignal(false)
   const [name, setName] = createSignal(props.task.name)
   const [desc, setDesc] = createSignal(props.task.description)
+  const [taskEditErr, setTaskEditErr] = createSignal<string | null>(null)
 
   let taskEditNameEl: HTMLInputElement | undefined
   let taskEditDescEl: HTMLTextAreaElement | undefined
@@ -100,6 +107,7 @@ export function TaskRow(props: {
           const ddx = ev.clientX - ox
           const ddy = ev.clientY - oy
           if (ddx * ddx + ddy * ddy < 12 * 12) {
+            setTaskEditErr(null)
             setEditOpen(true)
           }
           lastTaskQuickTap = { t: Date.now(), x: ev.clientX, y: ev.clientY }
@@ -114,10 +122,23 @@ export function TaskRow(props: {
   }
 
   const save = async () => {
+    if (!isClientValidationBypassed()) {
+      const vn = validateEntityName(name())
+      if (vn) {
+        setTaskEditErr(vn)
+        return
+      }
+      const vd = validateOptionalDescription(desc())
+      if (vd) {
+        setTaskEditErr(vd)
+        return
+      }
+    }
+    setTaskEditErr(null)
     const pn = props.task.name
     const pd = props.task.description
-    const nm = name().trim() || copy.newTaskName
-    const ds = desc()
+    const nm = name().trim()
+    const ds = desc().trim()
     props.setBoard((b) => {
       const col = b.columns.find((c) => c.id === props.columnId)
       const t = col?.tasks.find((x) => x.id === props.task.id)
@@ -138,7 +159,7 @@ export function TaskRow(props: {
           t.updatedAt = data.updatedAt
         }
       })
-    } catch {
+    } catch (e) {
       props.setBoard((b) => {
         const col = b.columns.find((c) => c.id === props.columnId)
         const t = col?.tasks.find((x) => x.id === props.task.id)
@@ -147,7 +168,13 @@ export function TaskRow(props: {
           t.description = pd
         }
       })
-      props.onError()
+      const msg = userFacingApiError(e)
+      queueMicrotask(() => {
+        setName(nm)
+        setDesc(ds)
+        setEditOpen(true)
+        setTaskEditErr(msg)
+      })
     }
   }
 
@@ -163,12 +190,12 @@ export function TaskRow(props: {
     setDelOpen(false)
     try {
       await deleteTask(props.boardId, props.columnId, props.task.id)
-    } catch {
+    } catch (e) {
       props.setBoard((b) => {
         const col = b.columns.find((c) => c.id === props.columnId)
         if (col) col.tasks = prev
       })
-      props.onError()
+      props.onError(e)
     }
   }
 
@@ -266,14 +293,24 @@ export function TaskRow(props: {
         </div>
       </div>
 
-      <BoardFormDialog title={copy.editTask} open={editOpen()} onOpenChange={setEditOpen}>
+      <BoardFormDialog
+        title={copy.editTask}
+        open={editOpen()}
+        onOpenChange={(open) => {
+          setEditOpen(open)
+          if (!open) setTaskEditErr(null)
+        }}
+      >
         <div class="mt-4 flex flex-col gap-3">
           <TextField class="flex flex-col gap-1">
-            <TextField.Label class="text-sm font-medium">{copy.taskName}</TextField.Label>
+            <TextField.Label class="block w-full">
+              <FieldLabelWithCount label={copy.taskName} length={name().length} max={NAME_MAX_CHARS} />
+            </TextField.Label>
             <TextField.Input
               ref={(el) => (taskEditNameEl = el)}
               class="kb-focus-ring rounded-[var(--radius-control)] border border-border bg-bg px-3 py-2 text-fg"
               value={name()}
+              maxLength={isClientValidationBypassed() ? undefined : NAME_MAX_CHARS}
               onInput={(e) => setName(e.currentTarget.value)}
               onKeyDown={enterFocusDescription(() => taskEditDescEl)}
             />
@@ -282,10 +319,14 @@ export function TaskRow(props: {
             label={copy.taskDescription}
             value={desc}
             onInput={setDesc}
-            maxLength={DESCRIPTION_MAX_CHARS}
+            maxLength={isClientValidationBypassed() ? undefined : DESCRIPTION_MAX_CHARS}
+            charCountMax={DESCRIPTION_MAX_CHARS}
             ref={(el) => (taskEditDescEl = el)}
             onKeyDown={enterCtrlMetaSubmit(save)}
           />
+          <Show when={taskEditErr()}>
+            <FormApiAlert message={taskEditErr()!} />
+          </Show>
         </div>
         <div class="mt-6 flex justify-end gap-2">
           <Button

@@ -1,0 +1,144 @@
+{
+  "format": "goroutine-board-export",
+  "version": 1,
+  "board": {
+    "name": "Sprint 42: Backend Core & Architecture",
+    "description": "Mandatory sprint for Q2 KPIs. Strict adherence to DoD (Definition of Done) and workflow gates is required. All PRs must pass 90% test coverage threshold."
+  },
+  "columns": [
+    {
+      "name": "Icebox",
+      "description": "Ideas and epics pending management approval",
+      "tasks": [
+        {
+          "name": "BE-901: Migrate orchestrator to Temporal.io",
+          "description": "Epic is too large. Need architecture committee approval before grooming. Requires rewriting state machines in Go."
+        },
+        {
+          "name": "BE-905: Rust rewrite investigation",
+          "description": "Management requested an evaluation to see if rewriting the matching engine in Rust will save AWS costs. Low priority."
+        }
+      ]
+    },
+    {
+      "name": "Grooming & Analysis",
+      "description": "Tasks requiring technical design docs before dev",
+      "tasks": [
+        {
+          "name": "BE-882: Define SLA for Kafka consumer lag",
+          "description": "We need to mathematically prove our consumer group scaling logic can handle 50k msgs/sec under peak load. Need capacity planning doc."
+        },
+        {
+          "name": "BE-884: DB schema for polymorphic associations",
+          "description": "DBA team requested a sync to discuss the new PostgreSQL sharding strategy for the audit_logs table to prevent table bloat."
+        }
+      ]
+    },
+    {
+      "name": "Ready for Dev",
+      "description": "Approved and estimated. Ready to be picked up.",
+      "tasks": [
+        {
+          "name": "BE-870: Distributed lock using Redis Redlock",
+          "description": "Implement go-redsync/redsync. Ensure the background CRON workers do not overlap their jobs across the K8s cluster nodes."
+        },
+        {
+          "name": "BE-871: Graceful shutdown timeout",
+          "description": "Increase terminationGracePeriodSeconds to 60s. Ensure context.WithTimeout handles inflight HTTP requests properly when SIGTERM is received."
+        }
+      ]
+    },
+    {
+      "name": "In Progress",
+      "description": "Active coding phase",
+      "tasks": [
+        {
+          "name": "BE-855: Optimize GC pause times (pprof)",
+          "description": "Current pprof heap profile shows high allocation rate in the WebSocket hub. Implement sync.Pool for byte buffers to reduce Garbage Collector pressure."
+        },
+        {
+          "name": "BE-856: gRPC bidirectional streaming",
+          "description": "Replace the current REST polling mechanism. Define Protobuf schemas, generate Go stubs, and implement thread-safe stream writers."
+        },
+        {
+          "name": "BE-860: Fix data race in DB pool",
+          "description": "go test -race failed in CI pipeline. sync.RWMutex unlock is happening before the channel read. Fix the locking logic in internal/db/pool.go."
+        }
+      ]
+    },
+    {
+      "name": "Blocked",
+      "description": "Waiting on external dependencies",
+      "tasks": [
+        {
+          "name": "BE-840: Upgrade to Go 1.22",
+          "description": "Blocked by the DevOps team. They need to update the base Docker images (golang:1.22-alpine) in the private CI registry before we can bump go.mod."
+        }
+      ]
+    },
+    {
+      "name": "Code Review (Peer)",
+      "description": "Requires 2 peer approvals",
+      "tasks": [
+        {
+          "name": "BE-830: Kafka Dead Letter Queue (DLQ)",
+          "description": "Using IBM/sarama. Implemented retry logic with exponential backoff. PR is open, waiting for approvals."
+        }
+      ]
+    },
+    {
+      "name": "Code Review (Tech Lead)",
+      "description": "Requires Tech Lead / Staff Engineer sign-off",
+      "tasks": [
+        {
+          "name": "BE-825: CGO memory leak fix",
+          "description": "PR #1042. Complex memory management. Tech Lead must review for potential memory leaks when freeing C++ pointers from Go using C.free(unsafe.Pointer(ptr))."
+        }
+      ]
+    },
+    {
+      "name": "QA Testing",
+      "description": "Deployed to staging, waiting for QA team",
+      "tasks": [
+        {
+          "name": "BE-810: Implement circuit breaker pattern",
+          "description": "Using sony/gobreaker for external API calls to the payment gateway. QA needs to simulate 500/503 errors to verify state transitions (Closed -> Open -> Half-Open)."
+        }
+      ]
+    },
+    {
+      "name": "UAT",
+      "description": "User Acceptance Testing / Security Review",
+      "tasks": [
+        {
+          "name": "BE-799: JWT EdDSA signature migration",
+          "description": "Migrating from HS256 to EdDSA (Ed25519) for cross-service token validation. Security team is performing pentesting on the staging environment."
+        }
+      ]
+    },
+    {
+      "name": "Ready for Release",
+      "description": "Merged to main, waiting for deployment window",
+      "tasks": [
+        {
+          "name": "BE-750: Distributed tracing (OpenTelemetry)",
+          "description": "OTel spans added to all gRPC unary interceptors and pgx queries. Ready to be deployed in the next release window (Tuesday 2:00 AM)."
+        }
+      ]
+    },
+    {
+      "name": "Done (Deployed)",
+      "description": "Successfully deployed to production cluster",
+      "tasks": [
+        {
+          "name": "BE-745: Fix N+1 query in GraphQL resolver",
+          "description": "Implemented dataloader (graph-gophers/dataloader). Postgres CPU usage dropped by 40%."
+        },
+        {
+          "name": "BE-746: Rate Limiter via Token Bucket",
+          "description": "Middleware using golang.org/x/time/rate deployed to production. Redis backend is stable, no memory spikes observed."
+        }
+      ]
+    }
+  ]
+}

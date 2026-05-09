@@ -7,17 +7,22 @@ import { enterCtrlMetaSubmit, enterFocusDescription } from '../../lib/formEnter'
 import {
   createColumn,
   DESCRIPTION_MAX_CHARS,
+  NAME_MAX_CHARS,
   POSITION_BASE,
   type AggregateBoardResponse,
   type AggregateColumnResponse,
 } from '../../lib/api'
+import { validateEntityName, validateOptionalDescription } from '../../lib/clientValidation'
+import { isClientValidationBypassed } from '../../lib/clientValidationBypass'
+import { userFacingApiError } from '../../lib/apiUserMessage'
 import { BoardFormDialog } from './BoardFormDialog'
 import { DescriptionField } from './DescriptionField'
+import { FormApiAlert } from './FormApiAlert'
+import { FieldLabelWithCount } from './FieldLabelWithCount'
 
 export function AddColumnZone(props: {
   boardId: string
   setBoard: (fn: (b: AggregateBoardResponse) => void) => void
-  onError: () => void
 }) {
   const [open, setOpen] = createSignal(false)
   const [name, setName] = createSignal('')
@@ -32,13 +37,21 @@ export function AddColumnZone(props: {
   })
 
   const submit = async () => {
-    const nm = name().trim()
-    if (!nm) {
-      setFieldErr(copy.nameRequired)
-      return
+    if (!isClientValidationBypassed()) {
+      const vn = validateEntityName(name())
+      if (vn) {
+        setFieldErr(vn)
+        return
+      }
+      const vd = validateOptionalDescription(desc())
+      if (vd) {
+        setFieldErr(vd)
+        return
+      }
     }
     setFieldErr(null)
-    const ds = desc()
+    const nm = name().trim()
+    const ds = desc().trim()
     const id = `optim-${crypto.randomUUID()}`
     const optimistic: AggregateColumnResponse = {
       id,
@@ -67,11 +80,14 @@ export function AddColumnZone(props: {
           c.position = i + POSITION_BASE
         })
       })
-    } catch {
+    } catch (e) {
       props.setBoard((b) => {
         b.columns = b.columns.filter((c) => c.id !== id)
       })
-      props.onError()
+      setName(nm)
+      setDesc(ds)
+      setOpen(true)
+      setFieldErr(userFacingApiError(e))
     }
   }
 
@@ -106,12 +122,15 @@ export function AddColumnZone(props: {
       >
         <div class="mt-4 flex flex-col gap-3">
           <TextField class="flex flex-col gap-1">
-            <TextField.Label class="text-sm font-medium">{copy.columnName}</TextField.Label>
+            <TextField.Label class="block w-full">
+              <FieldLabelWithCount label={copy.columnName} length={name().length} max={NAME_MAX_CHARS} />
+            </TextField.Label>
             <TextField.Input
               ref={(el) => (nameEl = el)}
               class="kb-focus-ring rounded-[var(--radius-control)] border border-border bg-bg px-3 py-2 text-fg"
               placeholder={copy.newColumnName}
               value={name()}
+              maxLength={isClientValidationBypassed() ? undefined : NAME_MAX_CHARS}
               onInput={(e) => setName(e.currentTarget.value)}
               onKeyDown={enterFocusDescription(() => descEl)}
             />
@@ -120,15 +139,14 @@ export function AddColumnZone(props: {
             label={copy.columnDescription}
             value={desc}
             onInput={setDesc}
-            maxLength={DESCRIPTION_MAX_CHARS}
+            maxLength={isClientValidationBypassed() ? undefined : DESCRIPTION_MAX_CHARS}
+            charCountMax={DESCRIPTION_MAX_CHARS}
             placeholder={copy.newColumnDescription}
             ref={(el) => (descEl = el)}
             onKeyDown={enterCtrlMetaSubmit(submit)}
           />
           <Show when={fieldErr()}>
-            <p class="text-sm text-danger" role="alert">
-              {fieldErr()}
-            </p>
+            <FormApiAlert message={fieldErr()!} />
           </Show>
         </div>
         <div class="mt-6 flex justify-end gap-2">

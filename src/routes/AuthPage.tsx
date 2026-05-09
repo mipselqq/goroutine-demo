@@ -3,8 +3,11 @@ import { useNavigate } from '@solidjs/router'
 import { Button } from '@kobalte/core/button'
 import { TextField } from '@kobalte/core/text-field'
 import { copy } from '../lib/copy'
-import { ApiError, login, register } from '../lib/api'
+import { login, register } from '../lib/api'
 import { setToken } from '../lib/auth'
+import { validateEmail, validatePassword } from '../lib/clientValidation'
+import { isClientValidationBypassed } from '../lib/clientValidationBypass'
+import { userFacingApiError } from '../lib/apiUserMessage'
 
 const PW_CHARS =
   'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%&*-_'
@@ -36,6 +39,18 @@ export default function AuthPage() {
     e.preventDefault()
     setError(null)
     setInfo(null)
+    if (!isClientValidationBypassed()) {
+      const emailErr = validateEmail(email())
+      if (emailErr) {
+        setError(emailErr)
+        return
+      }
+      const pwErr = validatePassword(password())
+      if (pwErr) {
+        setError(pwErr)
+        return
+      }
+    }
     setBusy(true)
     try {
       if (mode() === 'login') {
@@ -48,11 +63,7 @@ export default function AuthPage() {
         setMode('login')
       }
     } catch (err) {
-      if (err instanceof ApiError) {
-        setError(err.message || copy.somethingWrong)
-      } else {
-        setError(copy.somethingWrong)
-      }
+      setError(userFacingApiError(err))
     } finally {
       setBusy(false)
     }
@@ -73,11 +84,7 @@ export default function AuthPage() {
       setToken(data.token)
       navigate('/boards', { replace: true })
     } catch (err) {
-      if (err instanceof ApiError) {
-        setError(err.message || copy.somethingWrong)
-      } else {
-        setError(copy.somethingWrong)
-      }
+      setError(userFacingApiError(err))
     } finally {
       setBusy(false)
     }
@@ -104,13 +111,17 @@ export default function AuthPage() {
           </button>
         </p>
 
-        <form class="flex flex-col gap-4" onSubmit={onSubmit}>
+        <form
+          class="flex flex-col gap-4"
+          noValidate={isClientValidationBypassed()}
+          onSubmit={onSubmit}
+        >
           <TextField class="flex flex-col gap-1.5">
             <TextField.Label class="text-sm font-medium text-fg">{copy.email}</TextField.Label>
             <TextField.Input
               type="email"
               autocomplete="email"
-              required
+              required={!isClientValidationBypassed()}
               class="kb-focus-ring rounded-[var(--radius-control)] border border-border bg-bg px-3 py-2.5 text-fg placeholder:text-fg-muted"
               placeholder="you@example.com"
               value={email()}
@@ -122,8 +133,8 @@ export default function AuthPage() {
             <TextField.Input
               type="password"
               autocomplete={mode() === 'login' ? 'current-password' : 'new-password'}
-              required
-              minLength={6}
+              required={!isClientValidationBypassed()}
+              minLength={isClientValidationBypassed() ? undefined : 6}
               class="kb-focus-ring rounded-[var(--radius-control)] border border-border bg-bg px-3 py-2.5 text-fg placeholder:text-fg-muted"
               placeholder="••••••••"
               value={password()}
@@ -132,7 +143,7 @@ export default function AuthPage() {
           </TextField>
 
           <Show when={error()}>
-            <p class="text-sm text-danger" role="alert">
+            <p class="whitespace-pre-line text-sm text-danger" role="alert">
               {error()}
             </p>
           </Show>
