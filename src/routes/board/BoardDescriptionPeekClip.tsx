@@ -65,7 +65,8 @@ export function BoardDescriptionPeekClip(props: {
           : 'max-h-[2.7rem] min-h-[2.1rem] overflow-hidden'
     }
 
-    return `${outer} ${mt} ${mode}`
+    /** Bottom breathing room on the clip (not on `<p>`) so `scrollHeight` matches visible text. */
+    return `${outer} ${mt} ${mode} pb-3`
   })
 
   return (
@@ -89,7 +90,7 @@ export function BoardDescriptionPeekClip(props: {
         when={props.hasDescription()}
         fallback={
           <p
-            class={`relative z-0 whitespace-pre-wrap px-3 pb-3 leading-tight ${BOARD_DESCRIPTION_TEXT_CLASS} min-h-[1.375rem]`}
+            class={`relative z-0 whitespace-pre-wrap px-3 leading-tight ${BOARD_DESCRIPTION_TEXT_CLASS} min-h-[1.375rem]`}
           >
             <span class="select-none text-fg/[0.2]">{copy.noDescription}</span>
           </p>
@@ -97,7 +98,7 @@ export function BoardDescriptionPeekClip(props: {
       >
         <>
           <p
-            class={`relative z-0 min-w-0 whitespace-pre-wrap break-words px-3 pb-3 leading-tight text-fg-muted ${BOARD_DESCRIPTION_TEXT_CLASS}`}
+            class={`relative z-0 min-w-0 whitespace-pre-wrap break-words px-3 leading-tight text-fg-muted ${BOARD_DESCRIPTION_TEXT_CLASS}`}
           >
             {props.description() ?? ''}
           </p>

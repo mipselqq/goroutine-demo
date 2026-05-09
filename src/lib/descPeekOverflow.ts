@@ -1,11 +1,33 @@
 import { createEffect, createSignal, onCleanup, type Accessor } from 'solid-js'
 
 /** Subpixel / rounding slack vs the clip box (matches hover expand gate). */
-export const DESC_PEEK_OVERFLOW_EPS_PX = 1
+export const DESC_PEEK_OVERFLOW_EPS_PX = 3
 
-/** True when collapsed clip content exceeds visible height (needs fade / expand-on-hover). */
+function primaryDescContentChild(el: HTMLElement): HTMLElement | null {
+  const kids = Array.from(el.children)
+  for (const child of kids) {
+    if (!(child instanceof HTMLElement)) continue
+    if (child.getAttribute('aria-hidden') === 'true') continue
+    return child
+  }
+  return null
+}
+
+/**
+ * True when collapsed clip content exceeds visible height (needs fade / expand-on-hover).
+ * Prefer layout boxes on the first non-decoration child: `scrollHeight` can mis-report when the
+ * clip uses flex/min-height, or when padding on inner `<p>` inflates scroll extents while text fits.
+ */
 export function collapsedDescClipOverflows(el: HTMLElement): boolean {
-  return el.scrollHeight > el.clientHeight + DESC_PEEK_OVERFLOW_EPS_PX
+  const eps = DESC_PEEK_OVERFLOW_EPS_PX
+  const content = primaryDescContentChild(el)
+  if (content) {
+    const clipH = el.getBoundingClientRect().height
+    const contentH = content.getBoundingClientRect().height
+    if (contentH <= clipH + eps) return false
+    if (contentH > clipH + eps) return true
+  }
+  return el.scrollHeight > el.clientHeight + eps
 }
 
 /**
