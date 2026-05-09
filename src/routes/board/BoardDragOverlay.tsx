@@ -27,7 +27,7 @@ export function BoardDragOverlay(props: {
     const ghost = (
       <div
         ref={(node) => registerBoardDragGhostEl(node ?? null)}
-        class="pointer-events-none fixed left-0 top-0 z-[90] will-change-transform rounded-[var(--radius-card)] border border-accent/40 bg-bg-elevated/95 px-3 pt-2 pb-3 shadow-card"
+        class="pointer-events-none fixed left-0 top-0 z-[90] will-change-transform select-none rounded-[var(--radius-card)] border border-accent/40 bg-bg-elevated/95 px-3 pt-2 pb-3 shadow-card"
         style={{
           width: `${d.width * inv}px`,
           'min-height': `${d.height * inv}px`,

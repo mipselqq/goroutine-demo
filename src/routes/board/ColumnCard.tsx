@@ -297,7 +297,7 @@ export function ColumnCard(props: {
         props.setColumnEl(props.column.id, el)
         onCleanup(() => props.setColumnEl(props.column.id, undefined))
       }}
-      class="group flex w-80 shrink-0 flex-col overflow-visible rounded-[var(--radius-card)] border border-border bg-bg-elevated shadow-[0_4px_14px_rgb(0_0_0/0.26)] [contain:layout]"
+      class="group flex w-80 shrink-0 flex-col overflow-visible rounded-[var(--radius-card)] border border-border bg-bg-elevated shadow-[0_4px_14px_rgb(0_0_0/0.26)] [contain:layout] select-none"
       classList={{
         'opacity-40': colDraggingDim(),
         'ring-2 ring-accent/45 ring-offset-2 ring-offset-bg-elevated': colTaskDropHighlight(),

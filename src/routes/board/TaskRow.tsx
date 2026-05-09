@@ -223,7 +223,7 @@ export function TaskRow(props: {
       <div
         data-task-id={props.task.id}
         data-board-interactive=""
-        class="group/task relative overflow-hidden rounded-[var(--radius-control)] border border-border bg-bg-muted/50 transition-[colors,opacity] duration-150 [contain:layout] hover:border-accent/30"
+        class="group/task relative select-none overflow-hidden rounded-[var(--radius-control)] border border-border bg-bg-muted/50 transition-[colors,opacity] duration-150 [contain:layout] hover:border-accent/30"
         classList={{
           'opacity-35': taskDraggingDim(),
         }}
