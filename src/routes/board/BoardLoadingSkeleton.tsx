@@ -4,15 +4,15 @@ import { SKELETON_FADE_MS } from '../../lib/delayedSkeleton'
 
 const skeletonCols = [0, 1, 2]
 
-/** Mirrors `BoardHeader` layout (title + stats chip + description line). */
+/** Mirrors `BoardHeader` layout — matches column header scale (`text-lg` title + description body size). */
 export function BoardHeaderSkeleton() {
   return (
-    <div class="flex min-h-[4rem] min-w-0 flex-1 flex-col justify-center gap-1">
-      <div class="flex min-w-0 flex-wrap items-baseline gap-x-2 gap-y-1">
-        <div class="h-7 min-h-[1.75rem] min-w-0 flex-1 rounded-md shimmer" />
-        <div class="h-5 w-[5.5rem] shrink-0 rounded-md border border-border/40 shimmer" />
+    <div class="flex min-w-0 flex-1 flex-col justify-center gap-1">
+      <div class="flex min-w-0 flex-wrap items-baseline gap-x-2 gap-y-0.5">
+        <div class="h-6 max-w-[13rem] shrink-0 rounded-md shimmer sm:max-w-[16rem]" />
+        <div class="h-[1.125rem] w-[5.5rem] shrink-0 rounded-md border border-border/40 shimmer" />
       </div>
-      <div class="h-[1.58rem] w-full max-w-xl rounded shimmer" />
+      <div class="h-[1.125rem] w-full max-w-4xl rounded-md shimmer" />
     </div>
   )
 }
