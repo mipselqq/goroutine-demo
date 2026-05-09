@@ -3,6 +3,9 @@ import type { BoardPanView } from './boardPanView'
 /** Inline description body (tasks/columns): ~15% larger than Tailwind `text-xs` (0.75rem). */
 export const BOARD_DESCRIPTION_TEXT_CLASS = 'text-[0.8625rem]'
 
+/** Gap under titles / between stacked header lines (`spacing.1` ÷ 1.4). */
+export const BOARD_INLINE_STACK_GAP_CLASS = 'mt-[calc(0.25rem/1.4)]'
+
 /** Initial pan/zoom on board page load — must match loading skeleton transform. */
 export const BOARD_PAGE_INITIAL_VIEW: BoardPanView = { x: 80, y: 48, scale: 1 }
 

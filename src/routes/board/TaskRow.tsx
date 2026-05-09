@@ -15,13 +15,11 @@ import {
   type AggregateBoardResponse,
   type TaskResponse,
 } from '../../lib/api'
-import { createDescriptionPeek, DESCRIPTION_DESC_CLOSE, DESCRIPTION_DESC_OPEN } from '../../lib/descPeek'
-import { collapsedDescClipOverflows, createDescPeekNeedsFade } from '../../lib/descPeekOverflow'
+import { BoardDescriptionPeekClip } from './BoardDescriptionPeekClip'
 import { BoardFormDialog } from './BoardFormDialog'
 import { ShellExcludedDialogContent } from './ShellExcludedDialogContent'
 import { DescriptionField } from './DescriptionField'
 import { FieldLabelWithCount } from './FieldLabelWithCount'
-import { BOARD_DESCRIPTION_TEXT_CLASS } from '../../lib/boardViewConstants'
 import { validateEntityName, validateOptionalDescription } from '../../lib/clientValidation'
 import { isClientValidationBypassed } from '../../lib/clientValidationBypass'
 import { userFacingApiError } from '../../lib/apiUserMessage'
@@ -39,14 +37,7 @@ export function TaskRow(props: {
   exclusiveEditTaskId: Accessor<string | null>
   setExclusiveEditTaskId: Setter<string | null>
 }) {
-  let taskDescClipEl: HTMLElement | undefined
-  const taskDesc = createDescriptionPeek({
-    canPeek: () => (taskDescClipEl ? collapsedDescClipOverflows(taskDescClipEl) : false),
-  })
-  const [taskDescFade, attachTaskDescClip] = createDescPeekNeedsFade({
-    peek: taskDesc.peek,
-    refresh: () => `${props.task.id}\0${props.task.description ?? ''}`,
-  })
+  let clearDescriptionPeek: () => void = () => {}
   const taskDescTrimmed = createMemo(() => (props.task.description ?? '').trim())
   const [editOpen, setEditOpen] = createSignal(false)
   const [delOpen, setDelOpen] = createSignal(false)
@@ -109,15 +100,8 @@ export function TaskRow(props: {
     prevTaskBoardDrag = cur
   })
 
-  createEffect(() => {
-    const d = props.boardDrag()
-    if (d?.phase === 'dragging' && d.kind === 'task' && d.taskId === props.task.id) {
-      taskDesc.clear()
-    }
-  })
-
   const onTaskGrabPointerDown = (e: PointerEvent) => {
-    taskDesc.clear()
+    clearDescriptionPeek()
     if (e.button !== 0) return
     const now = Date.now()
     if (lastTaskQuickTap && now - lastTaskQuickTap.t < 420) {
@@ -246,63 +230,26 @@ export function TaskRow(props: {
       >
         <div
           class={`kb-focus-ring touch-none cursor-grab select-none rounded-t-[var(--radius-control)] pr-10 active:cursor-grabbing ${
-            taskDescTrimmed() ? 'min-h-[4.5rem] p-3' : 'min-h-[2.25rem] px-3 py-1.5'
+            taskDescTrimmed()
+              ? 'min-h-[4.5rem] px-3 pt-2 pb-0'
+              : 'min-h-[2.25rem] px-3 py-1.5'
           }`}
           onPointerDown={onTaskGrabPointerDown}
         >
-          <div class="min-w-0 pr-9 font-medium leading-tight text-fg">{props.task.name}</div>
-          <div
-            ref={(el) => {
-              taskDescClipEl = el ?? undefined
-              attachTaskDescClip(el ?? undefined)
+          <div class="mt-0 min-w-0 pr-9 font-medium leading-tight text-fg">{props.task.name}</div>
+          <BoardDescriptionPeekClip
+            variant="task"
+            refreshKey={() => `${props.task.id}\0${props.task.description ?? ''}`}
+            hasDescription={() => !!taskDescTrimmed()}
+            description={() => props.task.description}
+            collapsePeekWhen={() => {
+              const d = props.boardDrag()
+              return !!(d?.phase === 'dragging' && d.kind === 'task' && d.taskId === props.task.id)
             }}
-            class={`relative -ml-3 -mr-10 w-[calc(100%+3.25rem)] max-w-none overflow-hidden break-words ${
-              taskDescTrimmed() ? 'mt-2' : 'mt-1'
-            } ${
-              taskDesc.peek() && taskDescTrimmed()
-                ? 'scrollbar-none max-h-[min(85vh,40rem)] overflow-y-auto'
-                : taskDescTrimmed()
-                  ? 'max-h-[4.4rem] min-h-[2.75rem]'
-                  : 'max-h-[2.2rem] min-h-[1.375rem]'
-            }`}
-            style={{ transition: taskDesc.peek() ? DESCRIPTION_DESC_CLOSE : DESCRIPTION_DESC_OPEN }}
-            onPointerEnter={() => {
-              if (!taskDescTrimmed()) return
-              taskDesc.schedule()
+            bindPeekClear={(c) => {
+              clearDescriptionPeek = c
             }}
-            onPointerLeave={() => {
-              if (!taskDescTrimmed()) return
-              taskDesc.clear()
-            }}
-          >
-            <Show
-              when={taskDescTrimmed()}
-              fallback={
-                <p
-                  class={`relative z-0 whitespace-pre-wrap pl-3 pr-3 leading-tight ${BOARD_DESCRIPTION_TEXT_CLASS} ${
-                    taskDescTrimmed() ? 'min-h-[2.75rem]' : 'min-h-[1.375rem]'
-                  }`}
-                >
-                  <span class="select-none text-fg/[0.2]">{copy.noDescription}</span>
-                </p>
-              }
-            >
-              <>
-                <p class={`relative z-0 min-w-0 whitespace-pre-wrap break-words pl-3 pr-3 leading-tight text-fg-muted ${BOARD_DESCRIPTION_TEXT_CLASS}`}>
-                  {props.task.description}
-                </p>
-                <Show when={taskDescFade()}>
-                  <div
-                    class={`peek-desc-fade peek-desc-fade--muted absolute inset-x-0 bottom-0 z-[1] w-full min-w-full ${
-                      taskDesc.peek() ? 'opacity-0' : 'opacity-100'
-                    }`}
-                    style={{ transition: taskDesc.peek() ? DESCRIPTION_DESC_CLOSE : DESCRIPTION_DESC_OPEN }}
-                    aria-hidden="true"
-                  />
-                </Show>
-              </>
-            </Show>
-          </div>
+          />
         </div>
         <div class="border-t border-border/35 px-3 pb-2 pt-1.5 text-[10px] leading-snug text-fg-muted/85">
           <span class="tabular-nums" title={props.task.createdAt}>

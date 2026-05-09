@@ -1,7 +1,7 @@
 import { createEffect, createMemo, type Accessor } from 'solid-js'
 import { registerBoardDragGhostEl, setBoardDragGhostScale } from '../../lib/boardDragGhostDom'
 import { columnDropIndicatorMetrics } from '../../lib/boardPointerDnD'
-import { BOARD_DESCRIPTION_TEXT_CLASS } from '../../lib/boardViewConstants'
+import { BOARD_DESCRIPTION_TEXT_CLASS, BOARD_INLINE_STACK_GAP_CLASS } from '../../lib/boardViewConstants'
 import type { AggregateBoardResponse } from '../../lib/api'
 import type { BoardDragState } from './boardDragTypes'
 
@@ -27,7 +27,7 @@ export function BoardDragOverlay(props: {
     const ghost = (
       <div
         ref={(node) => registerBoardDragGhostEl(node ?? null)}
-        class="pointer-events-none fixed left-0 top-0 z-[90] will-change-transform rounded-[var(--radius-card)] border border-accent/40 bg-bg-elevated/95 p-3 shadow-card"
+        class="pointer-events-none fixed left-0 top-0 z-[90] will-change-transform rounded-[var(--radius-card)] border border-accent/40 bg-bg-elevated/95 px-3 pt-2 pb-3 shadow-card"
         style={{
           width: `${d.width * inv}px`,
           'min-height': `${d.height * inv}px`,
@@ -35,8 +35,16 @@ export function BoardDragOverlay(props: {
           'transform-origin': '0 0',
         }}
       >
-        <div class={d.kind === 'column' ? 'text-lg font-semibold text-fg' : 'font-medium text-fg'}>{d.title}</div>
-        <div class={`mt-1 whitespace-pre-wrap break-words leading-snug text-fg-muted ${BOARD_DESCRIPTION_TEXT_CLASS}`}>{d.sub}</div>
+        <div
+          class={`mt-0 ${d.kind === 'column' ? 'text-lg font-semibold leading-tight text-fg' : 'font-medium leading-tight text-fg'}`}
+        >
+          {d.title}
+        </div>
+        <div
+          class={`${BOARD_INLINE_STACK_GAP_CLASS} whitespace-pre-wrap break-words leading-tight text-fg-muted ${BOARD_DESCRIPTION_TEXT_CLASS}`}
+        >
+          {d.sub}
+        </div>
       </div>
     )
     if (d.kind !== 'column') return ghost

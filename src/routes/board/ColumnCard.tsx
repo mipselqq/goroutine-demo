@@ -19,15 +19,14 @@ import {
 } from '../../lib/api'
 import { cloneBoard } from '../../lib/optimistic'
 import { taskDropLineBeforeFullIndex } from '../../lib/boardPointerDnD'
-import { createDescriptionPeek, DESCRIPTION_DESC_CLOSE, DESCRIPTION_DESC_OPEN } from '../../lib/descPeek'
-import { collapsedDescClipOverflows, createDescPeekNeedsFade } from '../../lib/descPeekOverflow'
+import { BoardDescriptionPeekClip } from './BoardDescriptionPeekClip'
 import { BoardFormDialog } from './BoardFormDialog'
 import { ShellExcludedDialogContent } from './ShellExcludedDialogContent'
 import { DescriptionField } from './DescriptionField'
 import { FieldLabelWithCount } from './FieldLabelWithCount'
 import type { BoardDragPayload, BoardDragState } from './boardDragTypes'
 import { TaskRow } from './TaskRow'
-import { BOARD_DESCRIPTION_TEXT_CLASS } from '../../lib/boardViewConstants'
+import { BOARD_INLINE_STACK_GAP_CLASS } from '../../lib/boardViewConstants'
 import { validateEntityName, validateOptionalDescription } from '../../lib/clientValidation'
 import { isClientValidationBypassed } from '../../lib/clientValidationBypass'
 import { userFacingApiError } from '../../lib/apiUserMessage'
@@ -45,14 +44,7 @@ export function ColumnCard(props: {
   exclusiveEditTaskId: Accessor<string | null>
   setExclusiveEditTaskId: Setter<string | null>
 }) {
-  let colDescClipEl: HTMLElement | undefined
-  const colDesc = createDescriptionPeek({
-    canPeek: () => (colDescClipEl ? collapsedDescClipOverflows(colDescClipEl) : false),
-  })
-  const [colDescFade, attachColDescClip] = createDescPeekNeedsFade({
-    peek: colDesc.peek,
-    refresh: () => `${props.column.id}\0${props.column.description ?? ''}`,
-  })
+  let clearColDescriptionPeek: () => void = () => {}
   const columnDescTrimmed = createMemo(() => (props.column.description ?? '').trim())
   const [editOpen, setEditOpen] = createSignal(false)
   const [delOpen, setDelOpen] = createSignal(false)
@@ -105,15 +97,8 @@ export function ColumnCard(props: {
     prevColBoardDrag = cur
   })
 
-  createEffect(() => {
-    const d = props.boardDrag()
-    if (d?.phase === 'dragging' && d.kind === 'column' && d.columnId === props.column.id) {
-      colDesc.clear()
-    }
-  })
-
   const onColumnGrabPointerDown = (e: PointerEvent) => {
-    colDesc.clear()
+    clearColDescriptionPeek()
     if (e.button !== 0) return
     const now = Date.now()
     if (lastColQuickTap && now - lastColQuickTap.t < 420) {
@@ -320,80 +305,47 @@ export function ColumnCard(props: {
       data-board-interactive=""
     >
       <div
-        class={`flex flex-col gap-1 border-b border-border px-4 ${columnDescTrimmed() ? 'py-3' : 'py-1.5'}`}
+        class={`flex flex-col gap-1 border-b border-border ${
+          columnDescTrimmed() ? 'pt-2 pb-0' : 'py-1.5'
+        }`}
       >
-        <div class="flex items-start justify-between gap-2">
-          <div
-            class="kb-focus-ring min-w-0 flex-1 touch-none cursor-grab select-none rounded-sm py-0.5 active:cursor-grabbing"
-            onPointerDown={onColumnGrabPointerDown}
-          >
-            <h2 class="truncate text-lg font-semibold leading-tight text-fg">{props.column.name}</h2>
-            <p class="mt-0.5 text-[11px] font-medium tabular-nums text-fg-muted/90">
-              {formatTaskColumnCount(props.column.tasks.length)}
-            </p>
-            <div
-              ref={(el) => {
-                colDescClipEl = el ?? undefined
-                attachColDescClip(el ?? undefined)
-              }}
-              class={`relative overflow-hidden leading-tight [overflow-wrap:anywhere] ${BOARD_DESCRIPTION_TEXT_CLASS} ${
-                columnDescTrimmed() ? 'mt-2' : 'mt-1'
-              } ${
-                colDesc.peek() && columnDescTrimmed()
-                  ? 'scrollbar-none max-h-[min(70vh,28rem)] overflow-y-auto'
-                  : columnDescTrimmed()
-                    ? 'max-h-[2.7rem] min-h-[2.1rem]'
-                    : 'max-h-[1.35rem] min-h-[1.05rem]'
-              }`}
-              style={{ transition: colDesc.peek() ? DESCRIPTION_DESC_CLOSE : DESCRIPTION_DESC_OPEN }}
-              onPointerEnter={() => {
-                if (!columnDescTrimmed()) return
-                colDesc.schedule()
-              }}
-              onPointerLeave={() => {
-                if (!columnDescTrimmed()) return
-                colDesc.clear()
-              }}
-            >
-              <Show
-                when={columnDescTrimmed()}
-                fallback={
-                  <p
-                    class={`relative z-0 whitespace-pre-wrap break-words ${
-                      columnDescTrimmed() ? 'min-h-[2.1rem]' : 'min-h-[1.05rem]'
-                    }`}
-                  >
-                    <span class="select-none text-fg/[0.2]">{copy.noDescription}</span>
-                  </p>
-                }
+        <div
+          class="kb-focus-ring flex touch-none cursor-grab flex-col gap-0 rounded-sm active:cursor-grabbing"
+          onPointerDown={onColumnGrabPointerDown}
+        >
+          <div class="flex items-start justify-between gap-2 px-3">
+            <div class="min-w-0 flex-1 pb-0.5 pt-0">
+              <h2 class="mt-0 truncate text-lg font-semibold leading-tight text-fg">{props.column.name}</h2>
+              <p class={`${BOARD_INLINE_STACK_GAP_CLASS} text-[11px] font-medium tabular-nums text-fg-muted/90`}>
+                {formatTaskColumnCount(props.column.tasks.length)}
+              </p>
+            </div>
+            <div class="flex shrink-0 opacity-0 transition group-hover:opacity-100">
+              <button
+                type="button"
+                data-board-interactive=""
+                class="kb-focus-ring flex size-8 items-center justify-center rounded-[var(--radius-control)] border border-border bg-bg-muted text-danger hover:bg-bg"
+                aria-label={copy.deleteColumn}
+                onPointerDown={(e) => e.stopPropagation()}
+                onClick={() => setDelOpen(true)}
               >
-                <>
-                  <p class="relative z-0 whitespace-pre-wrap break-words text-fg-muted">{props.column.description}</p>
-                  <Show when={colDescFade()}>
-                    <div
-                      class={`peek-desc-fade peek-desc-fade--elevated absolute inset-x-0 bottom-0 z-[1] ${
-                        colDesc.peek() ? 'opacity-0' : 'opacity-100'
-                      }`}
-                      style={{ transition: colDesc.peek() ? DESCRIPTION_DESC_CLOSE : DESCRIPTION_DESC_OPEN }}
-                      aria-hidden="true"
-                    />
-                  </Show>
-                </>
-              </Show>
+                <Trash2 class="size-3" />
+              </button>
             </div>
           </div>
-          <div class="flex shrink-0 opacity-0 transition group-hover:opacity-100">
-            <button
-              type="button"
-              data-board-interactive=""
-              class="kb-focus-ring flex size-8 items-center justify-center rounded-[var(--radius-control)] border border-border bg-bg-muted text-danger hover:bg-bg"
-              aria-label={copy.deleteColumn}
-              onPointerDown={(e) => e.stopPropagation()}
-              onClick={() => setDelOpen(true)}
-            >
-              <Trash2 class="size-3" />
-            </button>
-          </div>
+          <BoardDescriptionPeekClip
+            variant="column"
+            refreshKey={() => `${props.column.id}\0${props.column.description ?? ''}`}
+            hasDescription={() => !!columnDescTrimmed()}
+            description={() => props.column.description}
+            collapsePeekWhen={() => {
+              const d = props.boardDrag()
+              return !!(d?.phase === 'dragging' && d.kind === 'column' && d.columnId === props.column.id)
+            }}
+            bindPeekClear={(c) => {
+              clearColDescriptionPeek = c
+            }}
+          />
         </div>
       </div>
 
