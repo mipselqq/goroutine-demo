@@ -92,7 +92,7 @@ export default function AuthPage() {
 
   return (
     <div class="flex flex-1 items-center justify-center px-4 py-12">
-      <div class="w-full max-w-2xl rounded-[var(--radius-card)] border border-border bg-bg-elevated p-8 shadow-card">
+      <div class="w-full max-w-md rounded-[var(--radius-card)] border border-border bg-bg-elevated p-8 shadow-card">
         <h1 class="mb-1 text-2xl font-semibold tracking-tight text-fg">
           {mode() === 'login' ? copy.login : copy.register}
         </h1>

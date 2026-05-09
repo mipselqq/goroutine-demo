@@ -1,6 +1,6 @@
 /** Single source of English UI copy */
 export const copy = {
-  appTitle: 'Goroutine Kanban',
+  appTitle: 'Goroutine',
   login: 'Log in',
   register: 'Create account',
   email: 'Email',

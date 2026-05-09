@@ -17,25 +17,21 @@ export const AppShell: ParentComponent = (props) => {
   return (
     <div class="flex min-h-dvh flex-col">
       <header class="sticky top-0 z-10 flex h-14 items-center justify-between gap-4 border-b border-border bg-bg-elevated/80 px-4 backdrop-blur-md">
-        <div class="flex min-w-0 flex-1 items-center gap-6 pr-4">
+        <div class="flex min-w-0 flex-1 items-center pr-4">
           <A
             href="/boards"
             class="text-base font-semibold tracking-tight text-fg no-underline hover:text-accent"
             end
           >
-            {copy.appTitle}
+            <span class="inline-flex items-baseline">
+              <span class="text-[#6AD7E5] [text-shadow:0_0_14px_rgba(106,215,229,0.55),0_0_36px_rgba(106,215,229,0.35),0_0_56px_rgba(106,215,229,0.18)]">
+                Go
+              </span>
+              <span class="text-[#f26a6a] [text-shadow:0_0_14px_rgba(242,106,106,0.55),0_0_36px_rgba(242,106,106,0.35),0_0_56px_rgba(242,106,106,0.18)]">
+                routine
+              </span>
+            </span>
           </A>
-          <Show when={authed()}>
-            <nav class="flex gap-4 text-sm text-fg-muted">
-              <A
-                href="/boards"
-                class="rounded-[var(--radius-control)] px-2 py-1 no-underline hover:bg-bg-muted hover:text-fg"
-                activeClass="bg-bg-muted text-fg"
-              >
-                {copy.boards}
-              </A>
-            </nav>
-          </Show>
         </div>
         <div class="flex shrink-0 items-center gap-2">
           <Show when={authed()}>
