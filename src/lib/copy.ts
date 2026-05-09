@@ -1,0 +1,83 @@
+/** Single source of English UI copy */
+export const copy = {
+  appTitle: 'Goroutine Kanban',
+  login: 'Log in',
+  register: 'Create account',
+  email: 'Email',
+  password: 'Password',
+  alreadyHaveAccount: 'Already have an account?',
+  notSignedUp: 'Not signed up?',
+  logout: 'Log out',
+  boards: 'Boards',
+  boardListTitle: 'Your boards',
+  createBoard: 'Create board',
+  createBoardTitle: 'Create board',
+  nameRequired: 'Name is required',
+  createColumnTitle: 'New column',
+  createTaskTitle: 'New task',
+  newBoardName: 'New board',
+  newBoardDescription: 'Add a short description',
+  populateBoard: 'Populate',
+  populateBoardBlurb: '50 columns, 15–30 random tasks each (lorem ipsum text).',
+  populateCinemaBanner: 'Populating…',
+  importBoardBanner: 'Importing board…',
+  copyBoardJson: 'Copy JSON',
+  pasteBoardJson: 'Paste JSON',
+  copyBoardTitle: 'Copy board JSON',
+  copyBoardPick: 'Board',
+  clipboardAccessDenied: 'Clipboard access was denied.',
+  importBoardInvalid: 'Invalid or unsupported JSON.',
+  editBoard: 'Edit board',
+  deleteBoard: 'Delete board',
+  deleteBoardConfirm: 'Delete this board? This cannot be undone.',
+  cancel: 'Cancel',
+  save: 'Save',
+  delete: 'Delete',
+  openBoard: 'Open board',
+  loadingBoards: 'Loading boards',
+  loadingBoard: 'Loading board',
+  emptyBoards: 'No boards yet. Create one below.',
+  somethingWrong: 'Something went wrong',
+  registerSuccess: 'Account created. You can log in now.',
+  serverStateSynced: 'In sync',
+  serverStatePending: 'Saving…',
+  noDescription: 'No description',
+  boardName: 'Board name',
+  boardDescription: 'Description',
+  columnName: 'Column name',
+  columnDescription: 'Column description',
+  taskName: 'Task name',
+  taskDescription: 'Task description',
+  addColumn: 'Add column',
+  addTask: 'Add task',
+  editColumn: 'Edit column',
+  editTask: 'Edit task',
+  deleteColumn: 'Delete column',
+  deleteTask: 'Delete task',
+  deleteColumnConfirm: 'Delete this column and all tasks inside?',
+  deleteTaskConfirm: 'Delete this task?',
+  newColumnName: 'New column',
+  newColumnDescription: 'Column description',
+  newTaskName: 'New task',
+  newTaskDescription: 'Task description',
+  canvasPanHint: 'Drag empty space or hold Ctrl and drag to pan. Scroll to zoom.',
+  boardDetailPanHint:
+    'Drag empty space or Ctrl+drag to pan. ← → keys pan horizontally. Scroll to zoom.',
+  routeLoading: 'Loading…',
+  loginAsTestUser: 'Login as test user',
+  taskCreated: 'Created',
+  taskUpdated: 'Updated',
+  boardCreated: 'Created',
+  boardUpdated: 'Updated',
+} as const
+
+/** Compact board summary for header / list (English plural rules). */
+export function formatBoardCompactStats(columns: number, tasks: number): string {
+  const cUnit = columns === 1 ? 'column' : 'columns'
+  const tUnit = tasks === 1 ? 'task' : 'tasks'
+  return `${columns} ${cUnit} · ${tasks} ${tUnit}`
+}
+
+export function formatTaskColumnCount(count: number): string {
+  return `${count} ${count === 1 ? 'task' : 'tasks'}`
+}
