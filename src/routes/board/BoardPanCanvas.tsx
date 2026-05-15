@@ -181,7 +181,7 @@ export function BoardPanCanvas(props: BoardPanCanvasProps) {
           boardScale={() => props.view.scale}
         />
       </div>
-      <p class="pointer-events-none absolute bottom-2 left-4 z-20 max-w-xl text-xs text-fg-muted">
+      <p class="pointer-events-none absolute bottom-2 left-4 z-20 max-w-xl text-sm text-fg-muted">
         {copy.boardDetailPanHint}
       </p>
     </div>

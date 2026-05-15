@@ -73,8 +73,7 @@ export const copy = {
   newTaskName: 'New task',
   newTaskDescription: 'Task description',
   canvasPanHint: 'Drag empty space or hold Ctrl and drag to pan. Scroll to zoom.',
-  boardDetailPanHint:
-    'Drag empty space or Ctrl+drag to pan. ← → keys pan horizontally. Scroll to zoom.',
+  boardDetailPanHint: 'Arrows or ctrl+drag to move, wheel to zoom, double click to edit.',
   routeLoading: 'Loading…',
   loginAsTestUser: 'Login as test user',
   taskCreated: 'Created',
