@@ -387,6 +387,7 @@ export default function BoardsPage() {
   }
 
   const rowHeightClass = 'min-h-[7rem]'
+  const actionBtnHeightClass = 'min-h-[4.9rem]'
 
   return (
     <div class="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-6 px-4 py-8">
@@ -450,10 +451,26 @@ export default function BoardsPage() {
         }
       >
         <ul class="flex flex-col gap-3">
+          <li>
+            <button
+              type="button"
+              class={`kb-focus-ring flex w-full flex-col items-center justify-center gap-1 rounded-[var(--radius-card)] border border-dashed border-border bg-bg-muted/30 text-fg-muted transition hover:border-accent/40 hover:bg-bg-muted/50 hover:text-fg ${actionBtnHeightClass}`}
+              onClick={() => {
+                setCreateName('')
+                setCreateDesc('')
+                setCreateFieldError(null)
+                setCreateOpen(true)
+              }}
+            >
+              <span class="text-sm font-medium text-fg">{copy.createBoard}</span>
+              <span class={`block ${BOARD_DESCRIPTION_TEXT_CLASS}`}>{copy.newBoardDescription}</span>
+            </button>
+          </li>
+
           <Show
             when={(boards() ?? []).length > 0}
             fallback={
-              <p class="rounded-[var(--radius-card)] border border-dashed border-border bg-bg-muted/40 px-4 py-6 text-center text-sm text-fg-muted">
+              <p class={`flex items-center justify-center rounded-[var(--radius-card)] border border-dashed border-border bg-bg-muted/40 px-4 text-center text-sm text-fg-muted ${actionBtnHeightClass}`}>
                 {copy.emptyBoards}
               </p>
             }
@@ -531,30 +548,23 @@ export default function BoardsPage() {
             </For>
           </Show>
 
-          <li>
-            <button
-              type="button"
-              class={`kb-focus-ring flex w-full flex-col items-center justify-center gap-2 rounded-[var(--radius-card)] border border-dashed border-border bg-bg-muted/30 text-fg-muted transition hover:border-accent/40 hover:bg-bg-muted/50 hover:text-fg ${rowHeightClass}`}
-              onClick={() => {
-                setCreateName('')
-                setCreateDesc('')
-                setCreateFieldError(null)
-                setCreateOpen(true)
-              }}
-            >
-              <span class="text-lg font-medium text-fg">{copy.createBoard}</span>
-              <span class={`block ${BOARD_DESCRIPTION_TEXT_CLASS}`}>{copy.newBoardDescription}</span>
-            </button>
+          <li class="relative my-8">
+            <div class="absolute inset-0 flex items-center" aria-hidden="true">
+              <div class="w-full border-t border-border" />
+            </div>
+            <div class="relative flex justify-center">
+              <span class="bg-bg px-3 text-sm text-fg-muted">Developer tools</span>
+            </div>
           </li>
 
           <li>
             <button
               type="button"
-              class={`kb-focus-ring flex w-full flex-col items-center justify-center gap-2 rounded-[var(--radius-card)] border border-dashed border-border bg-bg-muted/30 text-fg-muted transition hover:border-accent/40 hover:bg-bg-muted/50 hover:text-fg disabled:pointer-events-none disabled:opacity-55 ${rowHeightClass}`}
+              class={`kb-focus-ring flex w-full flex-col items-center justify-center gap-1 rounded-[var(--radius-card)] border border-dashed border-border bg-bg-muted/30 text-fg-muted transition hover:border-accent/40 hover:bg-bg-muted/50 hover:text-fg disabled:pointer-events-none disabled:opacity-55 ${actionBtnHeightClass}`}
               disabled={populateBusy() || importBusy()}
               onClick={() => void runExamplePopulateBoard()}
             >
-              <span class="text-lg font-medium text-fg">{copy.examplePopulateBoard}</span>
+              <span class="text-sm font-medium text-fg">{copy.examplePopulateBoard}</span>
               <span class={`text-center ${BOARD_DESCRIPTION_TEXT_CLASS}`}>{copy.examplePopulateBlurb}</span>
             </button>
           </li>
@@ -562,11 +572,11 @@ export default function BoardsPage() {
           <li>
             <button
               type="button"
-              class={`kb-focus-ring flex w-full flex-col items-center justify-center gap-2 rounded-[var(--radius-card)] border border-dashed border-border bg-bg-muted/30 text-fg-muted transition hover:border-accent/40 hover:bg-bg-muted/50 hover:text-fg disabled:pointer-events-none disabled:opacity-55 ${rowHeightClass}`}
+              class={`kb-focus-ring flex w-full flex-col items-center justify-center gap-1 rounded-[var(--radius-card)] border border-dashed border-border bg-bg-muted/30 text-fg-muted transition hover:border-accent/40 hover:bg-bg-muted/50 hover:text-fg disabled:pointer-events-none disabled:opacity-55 ${actionBtnHeightClass}`}
               disabled={populateBusy() || importBusy()}
               onClick={() => void runPopulateStressBoard()}
             >
-              <span class="text-lg font-medium text-fg">{copy.populateBoard}</span>
+              <span class="text-sm font-medium text-fg">{copy.populateBoard}</span>
               <span class={`text-center ${BOARD_DESCRIPTION_TEXT_CLASS}`}>{copy.populateBoardBlurb}</span>
               <Show when={populateBusy()}>
                 <span class="text-center text-[11px] text-fg-muted">{copy.routeLoading}</span>

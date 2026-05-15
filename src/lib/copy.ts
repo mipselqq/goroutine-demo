@@ -38,7 +38,7 @@ export const copy = {
   openBoard: 'Open board',
   loadingBoards: 'Loading boards',
   loadingBoard: 'Loading board',
-  emptyBoards: 'No boards yet. Create one below.',
+  emptyBoards: 'No boards yet.',
   somethingWrong: 'Something went wrong',
   /** Server 5xx — never show raw technical messages from the API body. */
   errorServer: 'Something went wrong on our side. Please try again in a moment.',
