@@ -16,7 +16,7 @@ export const copy = {
   createColumnTitle: 'New column',
   createTaskTitle: 'New task',
   newBoardName: 'New board',
-  newBoardDescription: 'Add a short description',
+  newBoardDescription: 'New board with name and description',
   populateBoard: 'Stress populate',
   populateBoardBlurb: '50 columns, 15–30 random tasks each (lorem ipsum text).',
   examplePopulateBoard: 'Example populate',

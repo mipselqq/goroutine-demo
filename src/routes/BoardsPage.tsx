@@ -543,22 +543,7 @@ export default function BoardsPage() {
               }}
             >
               <span class="text-lg font-medium text-fg">{copy.createBoard}</span>
-              <span class="text-xs">{copy.newBoardDescription}</span>
-            </button>
-          </li>
-
-          <li>
-            <button
-              type="button"
-              class={`kb-focus-ring flex w-full flex-col items-center justify-center gap-2 rounded-[var(--radius-card)] border border-dashed border-border bg-bg-muted/30 text-fg-muted transition hover:border-accent/40 hover:bg-bg-muted/50 hover:text-fg disabled:pointer-events-none disabled:opacity-55 ${rowHeightClass}`}
-              disabled={populateBusy() || importBusy()}
-              onClick={() => void runPopulateStressBoard()}
-            >
-              <span class="text-lg font-medium text-fg">{copy.populateBoard}</span>
-              <span class="text-center text-xs">{copy.populateBoardBlurb}</span>
-              <Show when={populateBusy()}>
-                <span class="text-center text-[11px] text-fg-muted">{copy.routeLoading}</span>
-              </Show>
+              <span class={`block ${BOARD_DESCRIPTION_TEXT_CLASS}`}>{copy.newBoardDescription}</span>
             </button>
           </li>
 
@@ -570,7 +555,22 @@ export default function BoardsPage() {
               onClick={() => void runExamplePopulateBoard()}
             >
               <span class="text-lg font-medium text-fg">{copy.examplePopulateBoard}</span>
-              <span class="text-center text-xs">{copy.examplePopulateBlurb}</span>
+              <span class={`text-center ${BOARD_DESCRIPTION_TEXT_CLASS}`}>{copy.examplePopulateBlurb}</span>
+            </button>
+          </li>
+
+          <li>
+            <button
+              type="button"
+              class={`kb-focus-ring flex w-full flex-col items-center justify-center gap-2 rounded-[var(--radius-card)] border border-dashed border-border bg-bg-muted/30 text-fg-muted transition hover:border-accent/40 hover:bg-bg-muted/50 hover:text-fg disabled:pointer-events-none disabled:opacity-55 ${rowHeightClass}`}
+              disabled={populateBusy() || importBusy()}
+              onClick={() => void runPopulateStressBoard()}
+            >
+              <span class="text-lg font-medium text-fg">{copy.populateBoard}</span>
+              <span class={`text-center ${BOARD_DESCRIPTION_TEXT_CLASS}`}>{copy.populateBoardBlurb}</span>
+              <Show when={populateBusy()}>
+                <span class="text-center text-[11px] text-fg-muted">{copy.routeLoading}</span>
+              </Show>
             </button>
           </li>
         </ul>
