@@ -1,6 +1,7 @@
 import { createEffect, createMemo, type Accessor } from 'solid-js'
 import { registerBoardDragGhostEl, setBoardDragGhostScale } from '../../lib/boardDragGhostDom'
 import { columnDropIndicatorMetrics } from '../../lib/boardPointerDnD'
+import { columnReorderIsNoop } from '../../lib/boardLayout'
 import { BOARD_DESCRIPTION_TEXT_CLASS, BOARD_INLINE_STACK_GAP_CLASS } from '../../lib/boardViewConstants'
 import type { AggregateBoardResponse } from '../../lib/api'
 import type { BoardDragState } from './boardDragTypes'
@@ -48,7 +49,9 @@ export function BoardDragOverlay(props: {
       </div>
     )
     if (d.kind !== 'column') return ghost
-    const m = columnDropIndicatorMetrics(d.columnDropSlot, b.columns, (id) => props.columnEl(id))
+    const m = columnReorderIsNoop(b.columns, d.columnId, d.columnDropSlot)
+      ? null
+      : columnDropIndicatorMetrics(d.columnDropSlot, b.columns, (id) => props.columnEl(id))
     return (
       <>
         {ghost}
