@@ -20,7 +20,7 @@ export const copy = {
   populateBoard: 'Stress populate',
   populateBoardBlurb: '50 columns, 15–30 random tasks each (lorem ipsum text).',
   examplePopulateBoard: 'Example populate',
-  examplePopulateBlurb: 'Sprint 42 demo board shipped as example_board.json.',
+  examplePopulateBlurb: 'One of example boards',
   populateCinemaBanner: 'Populating…',
   importBoardBanner: 'Importing board…',
   copyBoardJson: 'Copy JSON',

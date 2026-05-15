@@ -1,0 +1,141 @@
+{
+  "format": "goroutine-board-export",
+  "version": 1,
+  "board": {
+    "name": "Kitchen & Living Room Renovation",
+    "description": "Full renovation of the main floor. Structural work, new kitchen cabinets, flooring, and painting. Move-out required during demolition phase."
+  },
+  "columns": [
+    {
+      "name": "Planning",
+      "description": "Design and permits",
+      "tasks": [
+        {
+          "name": "Finalize kitchen layout",
+          "description": "Decide between L-shaped vs galley layout. Island must have electrical and plumbing rough-ins."
+        },
+        {
+          "name": "Get renovation permit",
+          "description": "City requires permit for structural wall removal. Budget 3-4 weeks for approval."
+        }
+      ]
+    },
+    {
+      "name": "Suppliers",
+      "description": "Vendors and quotes",
+      "tasks": [
+        {
+          "name": "Get countertop quotes",
+          "description": "Compare quartz vs granite vs solid surface. Request quotes from 3 fabricators including template and installation."
+        },
+        {
+          "name": "Order flooring samples",
+          "description": "Engineered hardwood sample pack arriving Friday. Need to match with cabinet color samples."
+        },
+        {
+          "name": "Research appliance package deals",
+          "description": "Check if buying fridge, oven, dishwasher as bundle saves 15% or more. Measure rough openings."
+        },
+        {
+          "name": "Get cabinet hardware samples",
+          "description": "Order handle and knob samples in brushed nickel and matte black. See how they feel in hand."
+        }
+      ]
+    },
+    {
+      "name": "Contractor Coordination",
+      "description": "Scheduling and contracts",
+      "tasks": [
+        {
+          "name": "Sign contract with general contractor",
+          "description": "Review lien waivers and payment schedule. 30% upfront, 30% at midpoint, 30% at completion, 10% holdback."
+        },
+        {
+          "name": "Schedule electrician rough-in",
+          "description": "Must happen before drywall. Need to run 220V line for induction cooktop and new circuits for kitchen island."
+        },
+        {
+          "name": "Book plumber for gas line",
+          "description": "Moving gas stove to island. Need licensed plumber to relocate gas line and install shut-off valve."
+        },
+        {
+          "name": "Coordinate HVAC duct cleaning",
+          "description": "Renovation will kick up dust. Schedule duct cleaning for week after drywall is finished."
+        },
+        {
+          "name": "Order dumpster permit for street placement",
+          "description": "City requires permit if dumpster extends onto street or sidewalk. Apply at least 2 weeks in advance."
+        }
+      ]
+    },
+    {
+      "name": "Demolition",
+      "description": "Tear-down phase",
+      "tasks": [
+        {
+          "name": "Rent dumpster",
+          "description": "Order 10-yard dumpster for debris. Schedule delivery 1 day before demo starts. Confirm debris types allowed."
+        },
+        {
+          "name": "Remove old cabinets",
+          "description": "Donate usable cabinets to Habitat for Humanity. Remove countertops carefully if selling on marketplace."
+        },
+        {
+          "name": "Pull up old flooring",
+          "description": "Check for asbestos if house was built before 1980. Must test before removing old vinyl tiles."
+        }
+      ]
+    },
+    {
+      "name": "In Progress",
+      "description": "Active work",
+      "tasks": [
+        {
+          "name": "Rough-in electrical wiring",
+          "description": "Electrician on site Tuesday. Install junction boxes for under-cabinet lighting and island outlets."
+        },
+        {
+          "name": "Install insulation",
+          "description": "R-value required for exterior wall: R-21. Use faced fiberglass batts. Vapor barrier on warm side of wall."
+        },
+        {
+          "name": "Frame new breakfast bar opening",
+          "description": "Remove section of load-bearing wall. Temporary support beam installed. New LVL beam arrives Monday."
+        },
+        {
+          "name": "Run new plumbing lines for island sink",
+          "description": "Trench under slab for hot and cold water lines. Drain line needs 1/4 inch per foot slope."
+        }
+      ]
+    },
+    {
+      "name": "Finishing",
+      "description": "Surface work phase",
+      "tasks": []
+    },
+    {
+      "name": "Inspection",
+      "description": "City inspections required",
+      "tasks": [
+        {
+          "name": "Schedule framing inspection",
+          "description": "Must pass before insulation goes in. Check nailing pattern and header sizing."
+        }
+      ]
+    },
+    {
+      "name": "Done",
+      "description": "Completed milestones",
+      "tasks": [
+        {
+          "name": "Order kitchen cabinets",
+          "description": "Custom shaker-style cabinets ordered. Lead time: 6 weeks. Delivery scheduled for week 7."
+        },
+        {
+          "name": "Select backsplash tile",
+          "description": "Chose 3x6 subway tile in matte white. Ordered 10% extra for wastage and cuts."
+        }
+      ]
+    }
+  ]
+}

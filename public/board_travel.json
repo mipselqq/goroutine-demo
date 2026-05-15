@@ -1,0 +1,141 @@
+{
+  "format": "goroutine-board-export",
+  "version": 1,
+  "board": {
+    "name": "Japan Trip — Spring 2025",
+    "description": "Two-week self-guided tour across Tokyo, Kyoto, and Osaka. Must book early for cherry blossom season."
+  },
+  "columns": [
+    {
+      "name": "To Research",
+      "description": "Not yet planned",
+      "tasks": [
+        {
+          "name": "Compare flight options",
+          "description": "Check ANA, JAL, and Singapore Airlines. Look for Haneda arrival (closer to city). Budget target under $1200 round trip."
+        },
+        {
+          "name": "JR Pass cost analysis",
+          "description": "Calculate if 14-day JR Pass is worth it vs single tickets. Need to account for Tokyo-Kyoto-Osaka shinkansen routes."
+        }
+      ]
+    },
+    {
+      "name": "Booking",
+      "description": "Reservations to make",
+      "tasks": [
+        {
+          "name": "Book Tokyo hotel (5 nights)",
+          "description": "Shinjuku or Shibuya area for first leg. Look for places with luggage forwarding service to Kyoto."
+        },
+        {
+          "name": "Book Kyoto ryokan (4 nights)",
+          "description": "Want at least one night in a traditional ryokan with onsen. Check booking cancellation policies."
+        },
+        {
+          "name": "Reserve TeamLab tickets",
+          "description": "Tickets sell out weeks in advance. Set reminder for when the next batch opens."
+        },
+        {
+          "name": "Book shinkansen reserved seats",
+          "description": "Reserve seats on the Tokaido Shinkansen for the Tokyo to Kyoto leg. Window seat on the right side for Mt. Fuji view."
+        }
+      ]
+    },
+    {
+      "name": "Documents",
+      "description": "Paperwork and essentials",
+      "tasks": [
+        {
+          "name": "Check passport validity",
+          "description": "Passport must be valid for entire stay. Renew now if expiring within 6 months of travel."
+        },
+        {
+          "name": "Purchase travel insurance",
+          "description": "Look for plans covering medical evacuation and trip cancellation. Compare SafetyWing and World Nomads."
+        },
+        {
+          "name": "Download offline maps",
+          "description": "Pre-download Google Maps offline for Tokyo, Kyoto, Osaka. Also get Japan-specific navigation app."
+        },
+        {
+          "name": "Register for Visit Japan Web",
+          "description": "Pre-clear customs and immigration online. Get QR codes ready before departure to skip paper forms."
+        },
+        {
+          "name": "Copy passports and store in cloud",
+          "description": "Make digital copies of all passports, visas, and important documents. Store in encrypted cloud folder."
+        }
+      ]
+    },
+    {
+      "name": "Packing",
+      "description": "What to bring",
+      "tasks": []
+    },
+    {
+      "name": "Itinerary",
+      "description": "Daily plans in progress",
+      "tasks": [
+        {
+          "name": "Plan Day 1-3 Tokyo highlights",
+          "description": "Tsukiji outer market in morning, Senso-ji temple, Akihabara afternoon. Book Tsukiji sushi tour."
+        },
+        {
+          "name": "Plan Kyoto temple route",
+          "description": "Optimize order: Fushimi Inari early morning (less crowded), then Kinkaku-ji, then Arashiyama bamboo grove."
+        }
+      ]
+    },
+    {
+      "name": "Food Planner",
+      "description": "Restaurants and reservations",
+      "tasks": [
+        {
+          "name": "Book omakase dinner",
+          "description": "Look for Michelin-starred sushi counter. Reserve 2 months ahead through hotel concierge."
+        },
+        {
+          "name": "Find okonomiyaki spot in Osaka",
+          "description": "Research Dotonbori area. Find a place with good reviews that takes reservations."
+        },
+        {
+          "name": "Research tsukemen shops in Tokyo",
+          "description": "Make a shortlist of top-rated tsukemen shops near the hotel. Check if they have English menus."
+        }
+      ]
+    },
+    {
+      "name": "Budget Tracking",
+      "description": "Expenses and currency",
+      "tasks": [
+        {
+          "name": "Set daily spending limit",
+          "description": "Target $150/day including food, transport, and activities. Exclude accommodation and flights."
+        },
+        {
+          "name": "Track deposits paid",
+          "description": "Keep spreadsheet of all deposits for hotels, tours, and train reservations. Total so far: $2100."
+        }
+      ]
+    },
+    {
+      "name": "Done",
+      "description": "Completed items",
+      "tasks": [
+        {
+          "name": "Get travel adapter",
+          "description": "Japan uses Type A/B plugs (same as US). Existing adapters work fine."
+        },
+        {
+          "name": "Learn basic Japanese phrases",
+          "description": "Memorized arigato, sumimasen, gochisousama. Practiced ordering at a local izakaya."
+        },
+        {
+          "name": "Notify credit card companies",
+          "description": "All cards have travel notices active. Confirmed no foreign transaction fees on any of them."
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,136 @@
+{
+  "format": "goroutine-board-export",
+  "version": 1,
+  "board": {
+    "name": "Weekly Meal Prep & Recipe Queue",
+    "description": "Organize weekly cooking schedule, manage pantry inventory, and test new recipes. Goal: cook five dinners at home per week and reduce takeout to once a week."
+  },
+  "columns": [
+    {
+      "name": "Meal Plan",
+      "description": "Weekly dinner schedule",
+      "tasks": [
+        {
+          "name": "Monday: creamy tomato basil pasta",
+          "description": "Use canned San Marzano tomatoes. Add fresh basil from windowsill plant. Serve with garlic bread."
+        },
+        {
+          "name": "Wednesday: sheet pan lemon chicken",
+          "description": "Chicken thighs with potatoes and asparagus. Marinate overnight in lemon herb vinaigrette."
+        },
+        {
+          "name": "Friday: homemade pizza night",
+          "description": "Cold-ferment dough for 48 hours. Toppings: pepperoni, mushrooms, bell peppers."
+        }
+      ]
+    },
+    {
+      "name": "Grocery List",
+      "description": "Shopping and pantry restock",
+      "tasks": [
+        {
+          "name": "Weekly produce run",
+          "description": "Need: romaine lettuce, tomatoes, avocados, lemons, garlic, ginger, cilantro. Check what is in season."
+        },
+        {
+          "name": "Restock spices",
+          "description": "Running low on cumin, smoked paprika, and cayenne. Buy from bulk section to refill jars."
+        },
+        {
+          "name": "Buy protein for the week",
+          "description": "Chicken thighs (2 lbs), ground beef (1 lb), salmon fillets (2), eggs (18-pack). Freeze what not using within 3 days."
+        },
+        {
+          "name": "Pick up fresh herbs",
+          "description": "Need basil for Monday pasta, cilantro for Wednesday chicken, rosemary for Sunday roast."
+        }
+      ]
+    },
+    {
+      "name": "Pantry Inventory",
+      "description": "What is in stock",
+      "tasks": []
+    },
+    {
+      "name": "Recipes to Try",
+      "description": "New dishes to test",
+      "tasks": [
+        {
+          "name": "Thai green curry from scratch",
+          "description": "Make curry paste with mortar and pestle. Use coconut cream not milk for richer sauce."
+        },
+        {
+          "name": "Sourdough starter maintenance",
+          "description": "Feed starter twice daily if baking this weekend. Discard 50g, feed 100g flour and 100g water."
+        },
+        {
+          "name": "Homemade ramen broth",
+          "description": "Pressure cooker tonkotsu broth. Need pork bones, aromatics. Simmer for 4 hours minimum."
+        },
+        {
+          "name": "Attempt croissants from scratch",
+          "description": "Lamination process requires patience. Need to keep butter block at exactly 60°F. Plan for a full Saturday."
+        },
+        {
+          "name": "Perfect jollof rice recipe",
+          "description": "Friend shared their family recipe. Need to source proper scotch bonnet and smoked paprika."
+        }
+      ]
+    },
+    {
+      "name": "Prep Work",
+      "description": "Sunday meal prep",
+      "tasks": [
+        {
+          "name": "Wash and chop vegetables",
+          "description": "Dice onions, mince garlic, chop bell peppers. Store in separate containers lined with paper towel."
+        },
+        {
+          "name": "Cook grains for the week",
+          "description": "Batch cook quinoa (2 cups), brown rice (2 cups). Cool completely before refrigerating."
+        },
+        {
+          "name": "Make dressing and sauces",
+          "description": "Lemon vinaigrette, tahini sauce, and yogurt dill sauce. Store in mason jars for easy pouring."
+        }
+      ]
+    },
+    {
+      "name": "Kitchen Maintenance",
+      "description": "Clean and organize",
+      "tasks": [
+        {
+          "name": "Deep clean refrigerator",
+          "description": "Remove all shelves and drawers. Wash with baking soda solution. Check all condiment expiration dates."
+        },
+        {
+          "name": "Sharpen knives",
+          "description": "Use 1000/6000 grit whetstone. Chef's knife and pairing knife need sharpening. Test on paper."
+        },
+        {
+          "name": "Clean oven",
+          "description": "Self-clean cycle overnight. Wipe out ash in the morning. Clean oven racks separately."
+        },
+        {
+          "name": "Season cast iron skillet",
+          "description": "After cleaning, apply thin layer of flaxseed oil. Bake upside down at 450°F for one hour."
+        }
+      ]
+    },
+    {
+      "name": "Leftover Plan",
+      "description": "Use leftovers efficiently",
+      "tasks": [
+        {
+          "name": "Monday pasta leftovers for Tuesday lunch",
+          "description": "Pack into portion containers immediately after cooking. Reheat with splash of water to restore sauce consistency."
+        }
+      ]
+    },
+    {
+      "name": "Done",
+      "description": "Completed this week",
+      "tasks": []
+    }
+  ]
+}

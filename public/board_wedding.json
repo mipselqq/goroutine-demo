@@ -1,0 +1,137 @@
+{
+  "format": "goroutine-board-export",
+  "version": 1,
+  "board": {
+    "name": "Emma & James — September Wedding",
+    "description": "Outdoor garden wedding at Riverside Estate. Guest count: 120. Budget target: $35,000. Must finalize vendor contracts by end of April."
+  },
+  "columns": [
+    {
+      "name": "Venue & Date",
+      "description": "Location and scheduling",
+      "tasks": [
+        {
+          "name": "Sign Riverside Estate contract",
+          "description": "Deposit of $3,000 due on signing. Rain plan: indoor pavilion included. Ceremony at 4 PM, reception at 6 PM."
+        },
+        {
+          "name": "Confirm wedding date with church",
+          "description": "Need to coordinate ceremony time with the priest. Block 2 PM to 3:30 PM slot."
+        },
+        {
+          "name": "Book hotel room block",
+          "description": "Negotiate 15-room block at The Grand. Rate locked at $189/night. Must release unsold rooms 30 days prior."
+        }
+      ]
+    },
+    {
+      "name": "Catering",
+      "description": "Food and drinks",
+      "tasks": [
+        {
+          "name": "Finalize menu tasting",
+          "description": "Tasting session scheduled for March 10. Choose between plated dinner vs buffet. Must accommodate 3 vegan and 2 gluten-free guests."
+        },
+        {
+          "name": "Order wedding cake",
+          "description": "Three-tier vanilla buttercream with fresh flowers. Baker needs final guest count 2 weeks before."
+        },
+        {
+          "name": "Arrange bar service",
+          "description": "Open bar for first 2 hours, then cash bar. Signature cocktail: lavender gin fizz. Estimate total bar cost: $2,400."
+        },
+        {
+          "name": "Order late-night snack station",
+          "description": "Mini sliders and poutine at 10 PM. Guest favorite at every wedding we have been to."
+        },
+        {
+          "name": "Arrange cake cutting set",
+          "description": "Order a nice cake cutting set with server and knife. Can also use as a keepsake."
+        }
+      ]
+    },
+    {
+      "name": "Guest Management",
+      "description": "RSVPs and seating",
+      "tasks": [
+        {
+          "name": "Send save-the-date cards",
+          "description": "Ordered from Minted. Mailing out this week. Include wedding website QR code."
+        },
+        {
+          "name": "Create seating chart template",
+          "description": "Round tables of 10. Head table for bridal party (8 people). Assign dietary restriction notes to each place."
+        },
+        {
+          "name": "Track RSVPs online",
+          "description": "Set up Google Sheets tracker with columns for meal choice, plus-one, and song requests."
+        }
+      ]
+    },
+    {
+      "name": "Attire",
+      "description": "Dress code and outfits",
+      "tasks": []
+    },
+    {
+      "name": "Vendors",
+      "description": "Photography, music, decor",
+      "tasks": [
+        {
+          "name": "Book photographer",
+          "description": "Contract signed with Sarah Chen Photography. 8 hours coverage plus second shooter. Engagement shoot included."
+        },
+        {
+          "name": "Hire DJ or band",
+          "description": "Getting quotes from 3 DJs. Must have MC experience for announcements. Need uplighting package."
+        },
+        {
+          "name": "Order floral arrangements",
+          "description": "Bridal bouquet in white roses and eucalyptus. Centerpieces: low arrangements in gold vases. Confirm flower availability for September."
+        }
+      ]
+    },
+    {
+      "name": "Transportation",
+      "description": "Getting everyone there",
+      "tasks": [
+        {
+          "name": "Book shuttle for guests",
+          "description": "Charter bus from hotel to venue and back. Capacity: 40 passengers. Two trips if needed."
+        }
+      ]
+    },
+    {
+      "name": "Day-Of Timeline",
+      "description": "Minute-by-minute schedule",
+      "tasks": [
+        {
+          "name": "Create vendor arrival schedule",
+          "description": "Florist at 10 AM, caterer at 12 PM, DJ at 2 PM, photographer at 3 PM."
+        },
+        {
+          "name": "Assign point people",
+          "description": "Maid of honor handles bride's phone. Best man handles groom's family. Coordinator handles all vendors."
+        }
+      ]
+    },
+    {
+      "name": "Done",
+      "description": "Completed tasks",
+      "tasks": [
+        {
+          "name": "Book honeymoon flights",
+          "description": "Round trip to Santorini booked. Departure: day after wedding at 2 PM. Return: 10 days later."
+        },
+        {
+          "name": "Order wedding invitations",
+          "description": "50 invitations with RSVP cards ordered. Addressing envelopes with calligraphy style."
+        },
+        {
+          "name": "Book engagement shoot with photographer",
+          "description": "Scheduled for April 5 at the botanical gardens. Included in the photography package."
+        }
+      ]
+    }
+  ]
+}

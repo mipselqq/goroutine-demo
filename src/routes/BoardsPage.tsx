@@ -361,12 +361,24 @@ export default function BoardsPage() {
     }
   }
 
+  let exampleBoardIndex = 0
+
   const runExamplePopulateBoard = async () => {
     if (importBusy() || populateBusy()) return
     setImportBusy(true)
     setLoadError(null)
     try {
-      const res = await fetch(`${import.meta.env.BASE_URL}example_board.json`)
+      const files = [
+        'example_board.json',
+        'board_travel.json',
+        'board_renovation.json',
+        'board_fitness.json',
+        'board_wedding.json',
+        'board_cooking.json',
+        'board_gopher.json',
+      ]
+      const idx = exampleBoardIndex++ % files.length
+      const res = await fetch(`${import.meta.env.BASE_URL}${files[idx]}`)
       if (!res.ok) throw new Error('fetch')
       const raw = await res.text()
       let payload: BoardExportV1

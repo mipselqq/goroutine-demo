@@ -1,0 +1,141 @@
+{
+  "format": "goroutine-board-export",
+  "version": 1,
+  "board": {
+    "name": "Q2 Fitness Challenge — 12 Weeks",
+    "description": "Cut phase with strength preservation. Target: 15% body fat while maintaining bench and squat numbers. Daily tracking mandatory."
+  },
+  "columns": [
+    {
+      "name": "Goals",
+      "description": "Targets for this cycle",
+      "tasks": [
+        {
+          "name": "Body fat from 18% to 15%",
+          "description": "Using Navy body fat measurement method. Weigh-in every Monday morning fasted. Progress photos every 2 weeks."
+        },
+        {
+          "name": "Maintain bench at 225 lbs",
+          "description": "Running 5-3-1 program on cut. If bench drops below 205, increase calories by 200 per day."
+        },
+        {
+          "name": "Run 5K in under 22 minutes",
+          "description": "Add interval training on leg days. Current time: 24:30. Target pace: 7 min/mile."
+        }
+      ]
+    },
+    {
+      "name": "Workout Plan",
+      "description": "Weekly training schedule",
+      "tasks": [
+        {
+          "name": "Push day A (heavy bench)",
+          "description": "Flat bench 5x5, incline dumbbell 3x10, lateral raises 4x12, tricep pushdown 3x12."
+        },
+        {
+          "name": "Pull day A (deadlift focus)",
+          "description": "Deadlift 5x3, pull-ups 4x8, barbell rows 4x8, face pulls 3x15."
+        },
+        {
+          "name": "Leg day A (squat focus)",
+          "description": "Back squat 5x5, Romanian deadlift 3x10, walking lunges 3x12, calf raises 4x15."
+        },
+        {
+          "name": "Push day B (volume bench)",
+          "description": "Incline bench 4x10, flat dumbbell press 3x12, cable flys 3x15, overhead tricep extension 3x12."
+        },
+        {
+          "name": "Pull day B (volume rows)",
+          "description": "Barbell rows 4x10, lat pulldown 3x12, seated cable rows 3x12, rear delt flys 4x15."
+        }
+      ]
+    },
+    {
+      "name": "Nutrition",
+      "description": "Meal prep and macros",
+      "tasks": [
+        {
+          "name": "Prep meals for Mon-Wed",
+          "description": "Chicken breast 200g, rice 150g, broccoli 100g per meal. Pre-portion into containers Sunday evening."
+        },
+        {
+          "name": "Hit daily protein target (180g)",
+          "description": "Breakfast: 3 eggs + protein shake (50g). Lunch: chicken (50g). Dinner: beef or fish (60g). Snack: Greek yogurt (20g)."
+        },
+        {
+          "name": "Track calories in MyFitnessPal",
+          "description": "Set target: 2400 kcal on training days, 2000 kcal on rest days. Log everything before bed."
+        },
+        {
+          "name": "Prep meals for Thu-Sat",
+          "description": "Cook on Wednesday evening. Salmon with sweet potato for Thursday, lean beef stir fry for Friday."
+        }
+      ]
+    },
+    {
+      "name": "Supplements",
+      "description": "Stock and schedule",
+      "tasks": []
+    },
+    {
+      "name": "Tracking",
+      "description": "Progress metrics",
+      "tasks": [
+        {
+          "name": "Weekly progress photos",
+          "description": "Front, side, back in consistent lighting. Upload to progress tracker every Sunday morning."
+        },
+        {
+          "name": "Log all workouts on spreadsheet",
+          "description": "Track sets, reps, and RPE for every exercise. Note any shoulder or knee discomfort."
+        },
+        {
+          "name": "Measure sleep quality",
+          "description": "Target: 7.5 hours average. Use sleep tracker to monitor. If below 6 hours, take deload week."
+        },
+        {
+          "name": "Take body measurements every 2 weeks",
+          "description": "Neck, chest, waist, hips, thighs, arms. Use consistent tape measure position each time."
+        }
+      ]
+    },
+    {
+      "name": "Recovery",
+      "description": "Rest and mobility",
+      "tasks": [
+        {
+          "name": "Book sports massage",
+          "description": "Schedule deep tissue massage every 3 weeks. Focus on tight hip flexors and thoracic spine."
+        },
+        {
+          "name": "Daily mobility routine",
+          "description": "10 minutes every morning: hip CARs, cat-cow, shoulder dislocates, world's greatest stretch."
+        }
+      ]
+    },
+    {
+      "name": "Cheat Meals",
+      "description": "Reward system",
+      "tasks": [
+        {
+          "name": "Plan Saturday refeed meal",
+          "description": "Allowed one meal off-plan. Rotate between pizza, burgers, sushi. Keep portions reasonable."
+        }
+      ]
+    },
+    {
+      "name": "Done",
+      "description": "Achievements this cycle",
+      "tasks": [
+        {
+          "name": "Completed week 1 of cut",
+          "description": "Lost 2 lbs of water weight. Strength maintained. Macros on point every day."
+        },
+        {
+          "name": "Bought new gym bag",
+          "description": "Replaced old bag with separate compartments for gym shoes and dirty laundry."
+        }
+      ]
+    }
+  ]
+}

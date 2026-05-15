@@ -1,0 +1,135 @@
+{
+  "format": "goroutine-board-export",
+  "version": 1,
+  "board": {
+    "name": "GopherCon 2025 — Go Gopher World Domination",
+    "description": "Strategic plan to replace all mascots with the Go gopher. Phase 1: infiltrate every README. Phase 2: take over the Go playground. Phase 3: world peace through channels."
+  },
+  "columns": [
+    {
+      "name": "Secret Missions",
+      "description": "Classified gopher ops",
+      "tasks": [
+        {
+          "name": "Replace Python logo in all internal docs",
+          "description": "Operation Hiss-s-s. Sneak gopher into the Python team's documentation. Start with the favicon."
+        },
+        {
+          "name": "Plant gopher plushies in every meeting room",
+          "description": "Coordinated drop scheduled for Thursday night. 23 plushies acquired from the gift shop."
+        },
+        {
+          "name": "Convince management that gopher is a brand asset",
+          "description": "Draft a deck showing positive correlation between gopher sightings and team morale."
+        }
+      ]
+    },
+    {
+      "name": "Propaganda",
+      "description": "Spreading the gopher gospel",
+      "tasks": [
+        {
+          "name": "Design gopher astronaut sticker",
+          "description": "Gopher in a space suit riding a goroutine. Must include text: To infinity and beyond—buffered."
+        },
+        {
+          "name": "Create gopher-themed error pages",
+          "description": "HTTP 404: gopher digging in wrong hole. HTTP 500: gopher panicked and is being recovered."
+        },
+        {
+          "name": "Record gopher ASMR for productivity",
+          "description": "10-hour loop of mechanical turk gopher typing on a keyboard. Upload to internal Slack channel."
+        },
+        {
+          "name": "Gopher wallpaper for all company laptops",
+          "description": "Distribute via MDM profile. Gopher wearing a tiny hoodie holding a GopherCon mug."
+        }
+      ]
+    },
+    {
+      "name": "Technical Debt",
+      "description": "Gopher infrastructure",
+      "tasks": [
+        {
+          "name": "Rewrite entire codebase in Go",
+          "description": "Because gopher said so. Estimated completion: somewhere between 2 weeks and never. May introduce a few minor breaking changes (like everything)."
+        },
+        {
+          "name": "Replace null with nil",
+          "description": "Campaign to eliminate the word null from all spoken language in the office. nil is the one true zero value."
+        },
+        {
+          "name": "Add gopher emoji to every commit message",
+          "description": "Pre-commit hook that prepends :gorilla: to each commit. No one has noticed in 3 months."
+        },
+        {
+          "name": "Ensure all interfaces satisfy io.WriterTo",
+          "description": "If it can be written, the gopher approves. If it cannot, wrap it until it does."
+        },
+        {
+          "name": "Eliminate all semicolons from codebase",
+          "description": "Semicolons are a relic of the past. Gopher does not recognize them. The compiler does not need them."
+        }
+      ]
+    },
+    {
+      "name": "Research & Development",
+      "description": "Cutting-edge gopher science",
+      "tasks": []
+    },
+    {
+      "name": "Bugs",
+      "description": "Unexpected gopher behavior",
+      "tasks": [
+        {
+          "name": "Gopher keeps eating all the := operators",
+          "description": "Short variable declarations disappearing from codebase. Suspect gopher mistaking them for sunflower seeds."
+        },
+        {
+          "name": "Race condition at the gopher feeding station",
+          "description": "Two gophers trying to access the same treat at the same time. Added mutex lock. Now one gopher is waiting forever."
+        },
+        {
+          "name": "Infinite loop in gopher tunnel",
+          "description": "Gopher keeps running select {} and refuses to stop. May need runtime.Goexit() intervention."
+        },
+        {
+          "name": "Gopher refuses to garbage collect",
+          "description": "GC pause times are fine but gopher just likes holding onto things. May need to call runtime.GC() manually."
+        }
+      ]
+    },
+    {
+      "name": "Q&A",
+      "description": "Frequently gopher-asked questions",
+      "tasks": [
+        {
+          "name": "Why is the gopher smiling",
+          "description": "Because defer always runs. Even when you panic, the gopher still gets the last laugh."
+        },
+        {
+          "name": "Can I use gopher in production",
+          "description": "gopher is always ready for production. The question is: are you ready for the gopher?"
+        }
+      ]
+    },
+    {
+      "name": "Done",
+      "description": "Completed gopher achievements",
+      "tasks": [
+        {
+          "name": "Added gopher to company letterhead",
+          "description": "Legal has not noticed yet. Gopher now officially part of all corporate communications."
+        },
+        {
+          "name": "Changed all loading spinners to gopher digging animation",
+          "description": "User engagement up 400%. Users love watching the gopher dig. Some are disappointed when the page finishes loading."
+        },
+        {
+          "name": "Gopher now has a dedicated Slack emoji",
+          "description": "Type :gopher: to summon the mascot. Used 47 times in the first hour."
+        }
+      ]
+    }
+  ]
+}
