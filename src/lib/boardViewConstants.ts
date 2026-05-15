@@ -16,8 +16,11 @@ export const BOARD_PAGE_INITIAL_VIEW: BoardPanView = { x: 80, y: 48, scale: 1 }
 export const BOARD_ZOOM_MIN = 0.35 / 1.3
 export const BOARD_ZOOM_MAX = 1.85
 
-/** Screen-space pan per arrow key; 20% above a 120px baseline. */
-export const BOARD_KEY_PAN_PX = 120 * 1.2
+/** Screen-space pan per arrow key; 332px (w-80 = 320px column + gap-3 = 12px gap). */
+export const BOARD_KEY_PAN_PX = 332
+
+/** Vertical pan per arrow key; ~150px (approx height of 2 tasks + gaps). */
+export const BOARD_KEY_PAN_Y_PX = 150
 
 /** Fine scroll: exp(-deltaY * K); higher = faster zoom per pixel of delta. */
 export const BOARD_WHEEL_ZOOM_K = 0.0045

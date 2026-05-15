@@ -94,9 +94,12 @@ export function BoardPanCanvas(props: BoardPanCanvasProps) {
         const move = (e: PointerEvent) => {
           const p = props.pan()
           if (!p) return
+          const dx = e.clientX - p.sx
+          const dy = e.clientY - p.sy
+          const sense = e.ctrlKey ? 3 : 1
           pendingPan = {
-            x: p.vx + (e.clientX - p.sx),
-            y: p.vy + (e.clientY - p.sy),
+            x: p.vx + dx * sense,
+            y: p.vy + dy * sense,
           }
           if (panMoveRaf === 0) {
             panMoveRaf = requestAnimationFrame(flushPanPending)
