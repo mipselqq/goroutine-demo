@@ -259,7 +259,6 @@ export default function BoardsPage() {
   }
 
   const runPopulateStressBoard = async () => {
-    if (populateBusy() || importBusy()) return
     setPopulateBusy(true)
     setLoadError(null)
     try {
@@ -364,7 +363,6 @@ export default function BoardsPage() {
   let exampleBoardIndex = 0
 
   const runExamplePopulateBoard = async () => {
-    if (importBusy() || populateBusy()) return
     setImportBusy(true)
     setLoadError(null)
     try {
@@ -572,8 +570,7 @@ export default function BoardsPage() {
           <li>
             <button
               type="button"
-              class={`kb-focus-ring flex w-full flex-col items-center justify-center gap-1 rounded-[var(--radius-card)] border border-dashed border-border bg-bg-muted/30 text-fg-muted transition hover:border-accent/40 hover:bg-bg-muted/50 hover:text-fg disabled:pointer-events-none disabled:opacity-55 ${actionBtnHeightClass}`}
-              disabled={populateBusy() || importBusy()}
+               class={`kb-focus-ring flex w-full flex-col items-center justify-center gap-1 rounded-[var(--radius-card)] border border-dashed border-border bg-bg-muted/30 text-fg-muted transition hover:border-accent/40 hover:bg-bg-muted/50 hover:text-fg disabled:pointer-events-none disabled:opacity-55 ${actionBtnHeightClass}`}
               onClick={() => void runExamplePopulateBoard()}
             >
               <span class="text-sm font-medium text-fg">{copy.examplePopulateBoard}</span>
@@ -584,8 +581,7 @@ export default function BoardsPage() {
           <li>
             <button
               type="button"
-              class={`kb-focus-ring flex w-full flex-col items-center justify-center gap-1 rounded-[var(--radius-card)] border border-dashed border-border bg-bg-muted/30 text-fg-muted transition hover:border-accent/40 hover:bg-bg-muted/50 hover:text-fg disabled:pointer-events-none disabled:opacity-55 ${actionBtnHeightClass}`}
-              disabled={populateBusy() || importBusy()}
+               class={`kb-focus-ring flex w-full flex-col items-center justify-center gap-1 rounded-[var(--radius-card)] border border-dashed border-border bg-bg-muted/30 text-fg-muted transition hover:border-accent/40 hover:bg-bg-muted/50 hover:text-fg disabled:pointer-events-none disabled:opacity-55 ${actionBtnHeightClass}`}
               onClick={() => void runPopulateStressBoard()}
             >
               <span class="text-sm font-medium text-fg">{copy.populateBoard}</span>
