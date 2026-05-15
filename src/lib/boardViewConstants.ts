@@ -9,8 +9,22 @@ export const BOARD_INLINE_STACK_GAP_CLASS = 'mt-[calc(0.25rem/1.4)]'
 /** Column header strip: same min height on every column so `border-b` aligns across the board. */
 export const COLUMN_CARD_HEADER_MIN_H_CLASS = 'min-h-[6.2rem]'
 
-/** Initial pan/zoom on board page load — must match loading skeleton transform. */
-export const BOARD_PAGE_INITIAL_VIEW: BoardPanView = { x: 80, y: 48, scale: 1 }
+/** Padding inside board canvas pan layer — must match `p-6` in BoardPanCanvas. */
+export const BOARD_CANVAS_PAD_PX = 24
+
+/** Horizontal gap between columns — must match `gap-3` in BoardPanCanvas. */
+export const BOARD_CANVAS_GAP_PX = 12
+
+/**
+ * Initial pan/zoom on board page load — must match loading skeleton transform.
+ * Positions first column's top-left corner at `gap` distance from canvas origin
+ * (the corner where the screen edge meets the bottom of the header).
+ */
+export const BOARD_PAGE_INITIAL_VIEW: BoardPanView = {
+  x: BOARD_CANVAS_GAP_PX - BOARD_CANVAS_PAD_PX,
+  y: BOARD_CANVAS_GAP_PX - BOARD_CANVAS_PAD_PX,
+  scale: 1,
+}
 
 /** Min / max board canvas scale (CSS transform). Further zoom-out: 1.3× beyond old ~0.35 floor. */
 export const BOARD_ZOOM_MIN = 0.35 / 1.3
